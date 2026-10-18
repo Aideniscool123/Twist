@@ -1,0 +1,7 @@
+; swap.twist - swap two cells with Juggle Zones
+ps3 #0 1
+ps3 #1 2
+jz2 #0 #1        ; now cell 0 = 2 and cell 1 = 1
+ad3 #0
+ad3 #1
+hl2              ; Hang Loose: do nothing, on purpose

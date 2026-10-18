@@ -1,0 +1,5 @@
+; echo.twist - ask for a number and say it back
+ps1 "Give me a number:"
+ad2 #0
+ps1 "You said:"
+ad3 #0

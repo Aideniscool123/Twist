@@ -1,0 +1,10 @@
+; countdown.twist - count down from 5, then stop
+ps3 #0 5          ; plant a seed: cell 0 = 5
+@again:
+jz1 #0 @done      ; if cell 0 is zero, we're finished
+ad3 #0            ; announce the number
+ad1 #0 -1         ; subtract one
+ps2 @again        ; pounce back to the top
+@done:
+ps1 "Liftoff!"
+hl1
