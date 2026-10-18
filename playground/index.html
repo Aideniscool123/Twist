@@ -1,0 +1,140 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Twist Playground</title>
+    <meta name="description" content="Write and run Twist, the chaotic little language where ps1 and ps2 mean totally different things." />
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🌀</text></svg>" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      rel="stylesheet"
+      href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600&family=Space+Grotesk:wght@400;600;700&display=swap"
+    />
+    <link rel="stylesheet" href="style.css" />
+    <script>
+      // pick the theme before anything draws, so there's no flash
+      try {
+        const saved = localStorage.getItem("twist-theme");
+        if (saved) document.documentElement.dataset.theme = saved;
+      } catch {}
+    </script>
+  </head>
+  <body>
+    <div class="backdrop" aria-hidden="true"></div>
+
+    <header class="top">
+      <div class="brand">
+        <h1 class="logo" aria-label="Twist"><span>t</span><span>w</span><span class="spin">i</span><span>s</span><span>t</span></h1>
+        <p class="tagline">ps1 prints. ps2 jumps. ps3 plants a seed. <em>Good luck.</em></p>
+      </div>
+      <div class="top-actions">
+        <label class="select">
+          <span class="sr-only">Load an example</span>
+          <select id="examples">
+            <option value="">Examples…</option>
+          </select>
+        </label>
+        <button id="reference-toggle" class="ghost" type="button" aria-expanded="false" aria-controls="reference">Instructions</button>
+        <button id="share" class="ghost" type="button" title="Copy a link to this program">Share</button>
+        <button id="theme" class="icon" type="button" aria-label="Switch between dark and light theme" title="Dark / light">
+          <span class="sun">☀️</span><span class="moon">🌙</span>
+        </button>
+      </div>
+    </header>
+
+    <main class="layout">
+      <section class="panel editor-panel" aria-label="Program">
+        <div class="panel-head">
+          <h2>Program</h2>
+          <span id="check-status" class="pill">checking…</span>
+        </div>
+        <div class="editor" id="editor">
+          <div class="gutter" id="gutter" aria-hidden="true"></div>
+          <div class="code">
+            <div class="current-line" id="current-line" hidden></div>
+            <pre class="highlight" id="highlight" aria-hidden="true"></pre>
+            <textarea id="source" spellcheck="false" autocapitalize="off" autocomplete="off" aria-label="Twist program"></textarea>
+          </div>
+        </div>
+        <ul class="problems" id="problems" aria-live="polite"></ul>
+      </section>
+
+      <section class="panel controls-panel" aria-label="Controls">
+        <div class="buttons">
+          <button id="run" class="primary" type="button" title="Run (Ctrl+Enter)">▶ Run</button>
+          <button id="play" type="button" title="Run slowly so you can watch">⏵ Watch</button>
+          <button id="step" type="button" title="Run one instruction (Ctrl+.)">↧ Step</button>
+          <button id="stop" type="button" disabled>■ Stop</button>
+          <button id="reset" class="ghost" type="button">↺ Reset</button>
+        </div>
+        <div class="settings">
+          <label class="toggle" title="No mood swings, and the same dice rolls every time">
+            <input type="checkbox" id="calm" />
+            <span class="track"><span class="thumb"></span></span>
+            Calm
+          </label>
+          <label class="seed">
+            Seed
+            <input id="seed" type="number" min="0" step="1" placeholder="random" />
+          </label>
+          <label class="speed">
+            Speed
+            <input id="speed" type="range" min="1" max="10" value="6" />
+          </label>
+        </div>
+      </section>
+
+      <section class="panel status-panel" aria-label="Twist's state">
+        <div class="mood" id="mood">
+          <span class="mood-face" id="mood-face">😎</span>
+          <div>
+            <div class="mood-name" id="mood-name">chill</div>
+            <div class="mood-bar" aria-hidden="true"><span id="mood-level"></span></div>
+          </div>
+        </div>
+        <dl class="stats">
+          <div><dt>Direction</dt><dd id="direction">↓ down</dd></div>
+          <div><dt>Steps</dt><dd id="steps">0</dd></div>
+          <div><dt>Calls</dt><dd id="calls">0</dd></div>
+          <div><dt>Jumps</dt><dd id="jumps">0</dd></div>
+        </dl>
+        <div class="swaps" id="swaps" hidden></div>
+      </section>
+
+      <section class="panel output-panel" aria-label="Output">
+        <div class="panel-head">
+          <h2>Output</h2>
+          <span id="run-status" class="pill">ready</span>
+        </div>
+        <pre class="output" id="output" aria-live="polite"></pre>
+        <label class="input-box">
+          <span>Input <small>(one line for each ad2 or rd3)</small></span>
+          <textarea id="input" rows="3" spellcheck="false" placeholder="42&#10;hello"></textarea>
+        </label>
+      </section>
+
+      <section class="panel memory-panel" aria-label="Memory">
+        <div class="panel-head">
+          <h2>Memory</h2>
+          <span class="hint">every cell starts at 0</span>
+        </div>
+        <div class="cells" id="cells"></div>
+      </section>
+    </main>
+
+    <aside class="reference" id="reference" hidden>
+      <div class="reference-head">
+        <h2>Instructions</h2>
+        <input id="reference-search" type="search" placeholder="Search: print, list, ps…" aria-label="Search instructions" />
+        <button id="reference-close" class="icon" type="button" aria-label="Close">✕</button>
+      </div>
+      <div class="reference-body" id="reference-body"></div>
+    </aside>
+
+    <div class="toast" id="toast" role="status" hidden></div>
+
+    <script type="module" src="app.js"></script>
+  </body>
+</html>

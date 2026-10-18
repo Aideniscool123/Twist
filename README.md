@@ -17,12 +17,25 @@ ps2 @again        ; pounce back up
 ps1 "Liftoff!"
 ```
 
-> **Status:** Phases 1-7 are done. Twist runs programs from the command line and
-has a REPL. The web playground comes next.
+> **Status:** Phases 1-8 are done: the language, the command line, a REPL and a
+web playground.
 
 ## Requirements
 
 - Node.js 18 or newer. There are no other dependencies and nothing to install.
+
+## Playground
+
+Twist has a web playground: an editor with syntax highlighting, Run, Watch
+(run slowly) and Step buttons, a live view of every cell, Twist's mood and
+direction, example programs, an instruction reference, and a dark/light theme.
+
+```
+npm run playground
+```
+
+Then open http://localhost:8080. The playground runs the same interpreter as
+the command line, straight from `src/`, so there's nothing to build.
 
 ## Try it
 
@@ -56,6 +69,6 @@ never get mixed into what your program prints.
 - [x] Phase 5: Add control flow (labels, jumps, loops, call/return)
 - [x] Phase 6: Add strings, lists, and the weird instructions
 - [x] Phase 7: Add error messages, tests, and the `run` CLI/REPL
-- [ ] Phase 8: Build the web playground
+- [x] Phase 8: Build the web playground
 - [ ] Phase 9: Write docs and an example gallery
 - [ ] Phase 10: Build something real with Twist
