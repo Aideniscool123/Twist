@@ -1,6 +1,7 @@
 import { test } from "node:test";
 import assert from "node:assert/strict";
-import { NAME, VERSION, TAGLINE } from "..//src/index.js"
+import { readFileSync } from "node:fs";
+import { NAME, VERSION, TAGLINE } from "..//src/index.js";
 
 test("the project identifies itself", () => {
     assert.equal(NAME, "Twist");
