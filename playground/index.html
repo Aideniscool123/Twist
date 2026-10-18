@@ -2,6 +2,14 @@
 <html lang="en">
   <head>
     <meta charset="utf-8" />
+    <script>
+      // Some servers drop the trailing slash (/play/playground instead of
+      // /play/playground/), which would make every relative link below point
+      // one folder too high. Put it back, before anything else loads.
+      if (!location.pathname.endsWith("/") && !location.pathname.endsWith(".html")) {
+        document.write('<base href="' + location.pathname + '/">');
+      }
+    </script>
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>Twist Playground</title>
     <meta name="description" content="Write and run Twist, the chaotic little language where ps1 and ps2 mean totally different things." />

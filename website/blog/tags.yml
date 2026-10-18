@@ -1,0 +1,24 @@
+devlog:
+  label: Dev log
+  permalink: /devlog
+  description: How Twist was built
+design:
+  label: Design
+  permalink: /design
+  description: Deciding how Twist works
+interpreter:
+  label: Interpreter
+  permalink: /interpreter
+  description: The parts that run programs
+chaos:
+  label: Chaos
+  permalink: /chaos
+  description: Dice, swaps, reverse gear and moods
+tools:
+  label: Tools
+  permalink: /tools
+  description: The CLI, REPL and playground
+docs:
+  label: Docs
+  permalink: /docs
+  description: Writing about Twist
