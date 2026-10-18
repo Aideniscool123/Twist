@@ -7,7 +7,8 @@ import {
   getInstruction,
   groupByMnemonic,
 } from "../src/language/instructions.js";
-import { INSTRUCTION_CODE, OperandKind, classifyLine } from "../src/language/syntax.js";
+import { INSTRUCTION_CODE, OperandKind, classifyLine, operandFits } from "../src/language/syntax.js";
+import { validateProgram } from "../src/language/validate.js";
 
 const FIRST_TEN = ["ps1", "ps2", "ps3", "ad1", "ad2", "ad3", "jz1", "jz2", "hl1", "hl2"];
 
@@ -59,11 +60,28 @@ describe("the instruction table", () => {
       const line = classifyLine(instruction.example);
       assert.equal(line.type, "instruction", `${instruction.code} example should be an instruction`);
       assert.equal(line.code, instruction.code);
-      assert.deepEqual(
-        line.operands.map((operand) => operand.kind),
-        instruction.operands.map((operand) => operand.kind),
-        `${instruction.code} example operands should match`,
-      );
+      assert.equal(line.operands.length, instruction.operands.length, `${instruction.code} example operand count`);
+      instruction.operands.forEach((spec, index) => {
+        assert.ok(
+          operandFits(spec.kind, line.operands[index].kind),
+          `${instruction.code} example operand ${index + 1} should be ${spec.kind}`,
+        );
+      });
+    }
+  });
+
+  it("has at least one instruction in every category", () => {
+    const used = new Set(INSTRUCTIONS.map((instruction) => instruction.category));
+    for (const category of Object.values(Category)) {
+      assert.ok(used.has(category), `nothing in ${category}`);
+    }
+  });
+
+  it("has examples the checker accepts (apart from labels defined elsewhere)", () => {
+    for (const instruction of INSTRUCTIONS) {
+      const { errors } = validateProgram(instruction.example);
+      const real = errors.filter((error) => !/is never defined/.test(error.message));
+      assert.deepEqual(real, [], `${instruction.code} example`);
     }
   });
 
@@ -83,7 +101,7 @@ describe("lookup helpers", () => {
     const groups = groupByMnemonic();
     assert.deepEqual(
       groups.get("ps").map((instruction) => instruction.code),
-      ["ps1", "ps2", "ps3"],
+      ["ps1", "ps2", "ps3", "ps4"],
     );
     assert.deepEqual(
       groups.get("hl").map((instruction) => instruction.code),
@@ -109,9 +127,17 @@ describe("the chaos rule", () => {
     ]);
   });
 
-  it("shows ps1, ps2 and ps3 doing three different kinds of thing", () => {
-    const categories = ["ps1", "ps2", "ps3"].map((code) => getInstruction(code).category);
-    assert.equal(new Set(categories).size, 3);
+  it("shows ps1 to ps4 doing four different kinds of thing", () => {
+    const categories = ["ps1", "ps2", "ps3", "ps4"].map((code) => getInstruction(code).category);
+    assert.equal(new Set(categories).size, 4);
+  });
+
+  it("gives rd, cl and ad three unrelated jobs each", () => {
+    for (const mnemonic of ["rd", "cl", "ad"]) {
+      const group = groupByMnemonic().get(mnemonic);
+      assert.equal(group.length, 3, mnemonic);
+      assert.equal(new Set(group.map((instruction) => instruction.category)).size, 3, mnemonic);
+    }
   });
 });
 

@@ -7,6 +7,7 @@ import {
   OperandKind,
   OPERAND_EXAMPLES,
   OPERAND_DESCRIPTIONS,
+  operandFits,
 } from "../src/language/syntax.js";
 
 describe("blank lines and comments", () => {
@@ -45,15 +46,28 @@ describe("instructions", () => {
     assert.deepEqual(classifyLine("hl1"), { type: "instruction", code: "hl1", operands: [] });
   });
 
-  it("reads cell and whole-number operands", () => {
+  it("reads cell and number operands", () => {
     assert.deepEqual(classifyLine("ps3 #0 -5"), {
       type: "instruction",
       code: "ps3",
       operands: [
         { kind: OperandKind.CELL, text: "#0", value: 0 },
-        { kind: OperandKind.INT, text: "-5", value: -5 },
+        { kind: OperandKind.NUMBER, text: "-5", value: -5 },
       ],
     });
+  });
+
+  it("reads decimal numbers", () => {
+    const result = classifyLine("mu1 #0 -2.5");
+    assert.deepEqual(result.operands[1], { kind: OperandKind.NUMBER, text: "-2.5", value: -2.5 });
+    assert.equal(classifyLine("ad1 #0 0.125").operands[1].value, 0.125);
+  });
+
+  it("reads an instruction code as an operand", () => {
+    assert.deepEqual(classifyLine("sw1 ps1 ad3").operands, [
+      { kind: OperandKind.CODE, text: "ps1", value: "ps1" },
+      { kind: OperandKind.CODE, text: "ad3", value: "ad3" },
+    ]);
   });
 
   it("reads a label operand", () => {
@@ -118,8 +132,12 @@ describe("operand mistakes", () => {
     "ps3 #01 5": "leading zero in a cell",
     "ps3 #-1 5": "negative cell",
     "ps3 #x 5": "cell that isn't a number",
-    "ad1 #0 1.5": "decimal",
     "ad1 #0 -0": "negative zero",
+    "ad1 #0 -0.0": "negative zero with a decimal",
+    "ad1 #0 1.": "decimal point with nothing after it",
+    "ad1 #0 .5": "decimal point with nothing before it",
+    "ad1 #0 01.5": "leading zero before a decimal",
+    "ad1 #0 1.2.3": "two decimal points",
     "ad1 #0 007": "leading zeros",
     "ps2 @Loop": "uppercase label",
     "ps2 loop": "label without @",
@@ -169,6 +187,14 @@ describe("shared tables", () => {
       assert.ok(OPERAND_EXAMPLES[kind], `missing example for ${kind}`);
       assert.ok(OPERAND_DESCRIPTIONS[kind], `missing description for ${kind}`);
     }
+  });
+
+  it("lets a value slot take a cell, a number or a string, and nothing else", () => {
+    const { VALUE, CELL, NUMBER, STRING, LABEL, CODE } = OperandKind;
+    for (const kind of [CELL, NUMBER, STRING]) assert.ok(operandFits(VALUE, kind), kind);
+    for (const kind of [LABEL, CODE]) assert.ok(!operandFits(VALUE, kind), kind);
+    assert.ok(operandFits(CELL, CELL));
+    assert.ok(!operandFits(CELL, NUMBER));
   });
 
   it("accepts good label names and rejects bad ones", () => {

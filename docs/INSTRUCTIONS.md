@@ -6,24 +6,124 @@ Instructions that share two letters (like `ps1`, `ps2` and `ps3`) are **not**
 variations of each other. Each code is its own instruction, and the number
 never tells you what it does.
 
-## All instructions
+Operand kinds: a `cell` is written `#0`, a `number` like `-2.5`, a `string`
+like `"hi"`, a `label` like `@loop` and a `code` like `ps1`. A `value` can be
+a cell, a number or a string.
 
-| Code | Name | Category | Operands | What it does | Example |
-| --- | --- | --- | --- | --- | --- |
-| `ps1` | Print String | output | `text` (string) | Print the text, then a newline. | `ps1 "Hello, reef!"` |
-| `ps2` | Pounce Somewhere | control | `target` (label) | Jump to the label. | `ps2 @again` |
-| `ps3` | Plant Seed | memory | `cell` (cell), `value` (int) | Put the number into the cell. | `ps3 #0 10` |
-| `ad1` | Add Digits | math | `cell` (cell), `amount` (int) | Add the amount (it can be negative) to the cell. | `ad1 #0 -1` |
-| `ad2` | Ask Directly | input | `cell` (cell) | Read a whole number from the user and store it in the cell. | `ad2 #1` |
-| `ad3` | Announce Digit | output | `cell` (cell) | Print the number in the cell, then a newline. | `ad3 #0` |
-| `jz1` | Jump if Zero | control | `cell` (cell), `target` (label) | Jump to the label if the cell holds 0. | `jz1 #0 @done` |
-| `jz2` | Juggle Zones | memory | `first` (cell), `second` (cell) | Swap the numbers in two cells. | `jz2 #0 #1` |
-| `hl1` | Halt Lightly | control | none | Stop the program. | `hl1` |
-| `hl2` | Hang Loose | misc | none | Do nothing at all. | `hl2` |
+## Output
+
+| Code | Name | Operands | What it does | Example |
+| --- | --- | --- | --- | --- |
+| `ps1` | Print String | `text` (string) | Print the text, then a newline. | `ps1 "Hello, reef!"` |
+| `ad3` | Announce Digit | `cell` (cell) | Print whatever is in the cell (a number, text or a list), then a newline. | `ad3 #0` |
+| `sy1` | Say Yonder | `value` (value) | Print the value with no newline after it. | `sy1 "Loading... "` |
+| `mo1` | Mood Out | none | Print how Twist is feeling right now. | `mo1` |
+
+## Input
+
+| Code | Name | Operands | What it does | Example |
+| --- | --- | --- | --- | --- |
+| `ad2` | Ask Directly | `cell` (cell) | Read a number from the user and store it in the cell. | `ad2 #1` |
+| `rd3` | Read Dialogue | `cell` (cell) | Read a line of text from the user and store it in the cell. | `rd3 #2` |
+
+## Memory
+
+| Code | Name | Operands | What it does | Example |
+| --- | --- | --- | --- | --- |
+| `ps3` | Plant Seed | `cell` (cell), `value` (value) | Put the value into the cell. Copying a list makes a separate copy. | `ps3 #0 10` |
+| `jz2` | Juggle Zones | `first` (cell), `second` (cell) | Swap what is in two cells. | `jz2 #0 #1` |
+| `cl3` | Clean Locker | `cell` (cell) | Reset the cell to 0. | `cl3 #4` |
+| `mo2` | Mood Observe | `cell` (cell) | Store Twist's current mood (a word like "grumpy") in the cell. | `mo2 #9` |
+
+## Math
+
+| Code | Name | Operands | What it does | Example |
+| --- | --- | --- | --- | --- |
+| `ad1` | Add Digits | `cell` (cell), `amount` (value) | Add the amount (it can be negative) to the number in the cell. | `ad1 #0 -1` |
+| `sb1` | Subtract Boldly | `cell` (cell), `amount` (value) | Subtract the amount from the number in the cell. | `sb1 #0 #1` |
+| `mu1` | Multiply Up | `cell` (cell), `factor` (value) | Multiply the number in the cell by the factor. | `mu1 #0 2.5` |
+| `dv1` | Divide Vigorously | `cell` (cell), `divisor` (value) | Divide the number in the cell by the divisor. Dividing by zero gives 0 and upsets Twist. | `dv1 #0 4` |
+| `md1` | Modulo Dance | `cell` (cell), `divisor` (value) | Replace the number in the cell with the remainder after dividing. Zero upsets Twist here too. | `md1 #0 2` |
+| `rd1` | Round Down | `cell` (cell) | Round the number in the cell down to a whole number. | `rd1 #0` |
+| `eq1` | Equal Question | `cell` (cell), `other` (value) | Set the cell to 1 if it equals the other value, or 0 if it doesn't. | `eq1 #0 "yes"` |
+| `gt1` | Greater Than | `cell` (cell), `other` (value) | Set the cell to 1 if its number is bigger than the other value, or 0 if not. | `gt1 #0 100` |
+
+## Control
+
+| Code | Name | Operands | What it does | Example |
+| --- | --- | --- | --- | --- |
+| `ps2` | Pounce Somewhere | `target` (label) | Jump to the label. | `ps2 @again` |
+| `jz1` | Jump if Zero | `cell` (cell), `target` (label) | Jump to the label if the cell is empty: 0, empty text or an empty list. | `jz1 #0 @done` |
+| `jn1` | Jump if Negative | `cell` (cell), `target` (label) | Jump to the label if the cell holds a number below 0. | `jn1 #0 @oops` |
+| `je1` | Jump if Equal | `cell` (cell), `other` (value), `target` (label) | Jump to the label if the cell equals the other value. | `je1 #0 "quit" @bye` |
+| `cl1` | Call Label | `target` (label) | Jump to the label, and remember where to come back to when rt1 runs. | `cl1 @greet` |
+| `rt1` | Return Trip | none | Go back to just after the most recent cl1. | `rt1` |
+| `hl1` | Halt Lightly | none | Stop the program. | `hl1` |
+
+## Text
+
+| Code | Name | Operands | What it does | Example |
+| --- | --- | --- | --- | --- |
+| `jn2` | Join Neatly | `cell` (cell), `value` (value) | Turn the cell into text and stick the value on the end. | `jn2 #0 "!"` |
+| `up1` | Uppercase Please | `cell` (cell) | Make the text in the cell UPPERCASE. | `up1 #0` |
+| `sp1` | Split Pieces | `cell` (cell), `separator` (value) | Split the text in the cell into a list, cutting at the separator ("" cuts every letter). | `sp1 #0 " "` |
+| `nm1` | Number Me | `cell` (cell) | Turn the text in the cell into a number, like "42" into 42. | `nm1 #0` |
+
+## List
+
+| Code | Name | Operands | What it does | Example |
+| --- | --- | --- | --- | --- |
+| `mk1` | Make Kit | `cell` (cell) | Put a new empty list in the cell. | `mk1 #5` |
+| `ps4` | Pile Stuff | `list` (cell), `value` (value) | Add the value to the end of the list. | `ps4 #5 "apple"` |
+| `pp1` | Pop Pop | `list` (cell), `into` (cell) | Take the last item off the list and put it in another cell. | `pp1 #5 #0` |
+| `gt2` | Grab Thing | `into` (cell), `from` (cell), `index` (value) | Copy item number `index` (counting from 0) of a list or text into a cell. | `gt2 #0 #5 2` |
+| `st1` | Stash Thing | `list` (cell), `index` (value), `value` (value) | Replace item number `index` (counting from 0) of the list with the value. | `st1 #5 0 99` |
+| `ln1` | Length Now | `into` (cell), `of` (value) | Store how many items a list has (or how many letters text has) in the cell. | `ln1 #0 #5` |
+
+## Chaos
+
+| Code | Name | Operands | What it does | Example |
+| --- | --- | --- | --- | --- |
+| `rd2` | Roll Dice | `cell` (cell), `sides` (value) | Roll a dice with this many sides and store the result (1 to sides) in the cell. | `rd2 #0 6` |
+| `cl2` | Coin Leap | `target` (label) | Flip a coin. Heads: jump to the label. Tails: carry on. | `cl2 @lucky` |
+| `sh1` | Shuffle Heap | `list` (cell) | Shuffle the list into a random order. | `sh1 #5` |
+| `sw1` | Swap Words | `first` (code), `second` (code) | Swap what two instructions do, for the rest of the run. Swap them again to undo it. | `sw1 ps1 ad3` |
+| `rv1` | Reverse Vibes | none | Flip direction: the program starts running upward, until the next rv1. | `rv1` |
+| `ty1` | Thank You | none | Compliment Twist. It cheers up a little. Twist never refuses a ty1. | `ty1` |
+
+## Misc
+
+| Code | Name | Operands | What it does | Example |
+| --- | --- | --- | --- | --- |
+| `hl2` | Hang Loose | none | Do nothing at all. | `hl2` |
 
 ## Same letters, different jobs
 
-- **ps**: `ps1` Print String, `ps2` Pounce Somewhere, `ps3` Plant Seed
+- **ps**: `ps1` Print String, `ps2` Pounce Somewhere, `ps3` Plant Seed, `ps4` Pile Stuff
 - **ad**: `ad1` Add Digits, `ad2` Ask Directly, `ad3` Announce Digit
+- **sy**: `sy1` Say Yonder
+- **mo**: `mo1` Mood Out, `mo2` Mood Observe
+- **rd**: `rd1` Round Down, `rd2` Roll Dice, `rd3` Read Dialogue
 - **jz**: `jz1` Jump if Zero, `jz2` Juggle Zones
+- **cl**: `cl1` Call Label, `cl2` Coin Leap, `cl3` Clean Locker
+- **sb**: `sb1` Subtract Boldly
+- **mu**: `mu1` Multiply Up
+- **dv**: `dv1` Divide Vigorously
+- **md**: `md1` Modulo Dance
+- **eq**: `eq1` Equal Question
+- **gt**: `gt1` Greater Than, `gt2` Grab Thing
+- **jn**: `jn1` Jump if Negative, `jn2` Join Neatly
+- **je**: `je1` Jump if Equal
+- **rt**: `rt1` Return Trip
 - **hl**: `hl1` Halt Lightly, `hl2` Hang Loose
+- **up**: `up1` Uppercase Please
+- **sp**: `sp1` Split Pieces
+- **nm**: `nm1` Number Me
+- **mk**: `mk1` Make Kit
+- **pp**: `pp1` Pop Pop
+- **st**: `st1` Stash Thing
+- **ln**: `ln1` Length Now
+- **sh**: `sh1` Shuffle Heap
+- **sw**: `sw1` Swap Words
+- **rv**: `rv1` Reverse Vibes
+- **ty**: `ty1` Thank You

@@ -33,9 +33,14 @@ Not valid: `PS1` (uppercase), `p1` (one letter), `ps0` (number starts at 1),
 | Kind | Looks like | Meaning |
 | --- | --- | --- |
 | Cell | `#0`, `#12` | A numbered memory cell. |
-| Whole number | `5`, `-3`, `0` | An integer. No decimals, no leading zeros, no `-0`. |
+| Number | `5`, `-3`, `0`, `2.5`, `-0.125` | A whole number or a decimal. No leading zeros, no `-0`, and a decimal point needs digits on both sides (`0.5`, not `.5` or `5.`). |
 | String | `"hello"` | Text in double quotes. May contain spaces and `;`. |
 | Label | `@again` | The name of a label defined somewhere in the program. |
+| Code | `ps1` | An instruction code, used by `sw1` (Swap Words). |
+
+In the [instruction reference](INSTRUCTIONS.md), an operand marked **value**
+can be a cell, a number or a string. A cell there means "whatever is in that
+cell".
 
 ### Strings and escapes
 

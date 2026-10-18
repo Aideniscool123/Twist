@@ -69,8 +69,32 @@ describe("mistakes", () => {
     assert.equal(result.ok, false);
     assert.match(result.errors[0].message, /operand 1 \(cell\) should be a cell like #0, but got 5/);
 
-    const second = validateProgram('ps3 #0 "x"');
-    assert.match(second.errors[0].message, /operand 2 \(value\) should be a whole number/);
+    const second = validateProgram("ps3 #0 @x\n@x:\n");
+    assert.match(second.errors[0].message, /operand 2 \(value\) should be a cell, a number or a string/);
+  });
+
+  it("lets a value slot take a cell, a number or a string", () => {
+    assert.equal(validateProgram('ps3 #0 "x"\nps3 #1 #0\nps3 #2 1.5\n').ok, true);
+  });
+
+  it("allows a line to use the operands of an instruction it may be swapped with", () => {
+    assert.equal(validateProgram("sw1 ps1 ad3\nps1 #0\nad3 \"hi\"\n").ok, true);
+  });
+
+  it("follows chains of swaps", () => {
+    assert.equal(validateProgram("sw1 ps1 ad3\nsw1 ad3 ps2\nps1 @x\n@x:\n").ok, true);
+  });
+
+  it("still rejects operands that fit none of the swapped jobs", () => {
+    const result = validateProgram("sw1 ps1 ad3\nps1 5\n");
+    assert.equal(result.ok, false);
+    assert.equal(result.errors[0].line, 2);
+  });
+
+  it("reports a swap with a code that isn't an instruction", () => {
+    const result = validateProgram("sw1 ps1 zz9");
+    assert.equal(result.ok, false);
+    assert.match(result.errors[0].message, /zz9 isn't an instruction/);
   });
 
   it("passes syntax errors through with their line number", () => {

@@ -17,9 +17,9 @@ ps2 @again        ; pounce back up
 ps1 "Liftoff!"
 ```
 
-> **Status:** Phase 1 (Design) is done. The language has rules, ten
-> instructions and a checker, but there is no interpreter yet, so programs
-> can be checked but not run.
+> **Status:** Phases 1 and 2 are done. Twist has 42 instructions (with dice,
+moods, reverse gear and Swap Words) and a checker, but no interpreter yet, so
+programs can be checked but not run.
 
 ## Requirements
 
@@ -45,7 +45,7 @@ npm run docs                      # regenerate docs/INSTRUCTIONS.md
 ## Roadmap
 
 - [x] Phase 1: Design the language rules and first instructions
-- [ ] Phase 2: Finish the instruction set (make it Turing complete)
+- [x] Phase 2: Finish the instruction set (make it Turing complete)
 - [ ] Phase 3: Build the lexer and parser
 - [ ] Phase 4: Build the core interpreter (hello world)
 - [ ] Phase 5: Add control flow (labels, jumps, loops, call/return)

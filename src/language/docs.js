@@ -18,17 +18,26 @@ export function renderInstructionReference(list = INSTRUCTIONS) {
     "variations of each other. Each code is its own instruction, and the number",
     "never tells you what it does.",
     "",
-    "## All instructions",
-    "",
-    "| Code | Name | Category | Operands | What it does | Example |",
-    "| --- | --- | --- | --- | --- | --- |",
+    "Operand kinds: a `cell` is written `#0`, a `number` like `-2.5`, a `string`",
+    'like `"hi"`, a `label` like `@loop` and a `code` like `ps1`. A `value` can be',
+    "a cell, a number or a string.",
   ];
 
-  for (const instruction of list) {
+  const categories = [...new Set(list.map((instruction) => instruction.category))];
+  for (const category of categories) {
     lines.push(
-      `| \`${instruction.code}\` | ${instruction.name} | ${instruction.category} | ` +
-        `${describeOperands(instruction)} | ${instruction.summary} | \`${instruction.example}\` |`,
+      "",
+      `## ${category[0].toUpperCase()}${category.slice(1)}`,
+      "",
+      "| Code | Name | Operands | What it does | Example |",
+      "| --- | --- | --- | --- | --- |",
     );
+    for (const instruction of list.filter((item) => item.category === category)) {
+      lines.push(
+        `| \`${instruction.code}\` | ${instruction.name} | ${describeOperands(instruction)} | ` +
+          `${instruction.summary} | \`${instruction.example}\` |`,
+      );
+    }
   }
 
   lines.push("", "## Same letters, different jobs", "");

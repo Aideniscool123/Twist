@@ -1,0 +1,15 @@
+; backwards.twist - Swap Words, then Reverse Vibes
+jz1 #9 @start           ; the first time through, #9 is 0, so skip ahead
+ps1 "4. ...and runs off the top. The end."
+ps1 "3. Twist turned around, so now it reads upward..."
+@turn:
+rv1
+@start:
+ps1 "1. Going down."
+sw1 ps1 ad3             ; ps1 and ad3 swap jobs
+ps3 #0 "2. ps1 is announcing cell #0, and ad3 prints text:"
+ps1 #0
+ad3 "   see?"
+sw1 ps1 ad3             ; swap them back
+ps3 #9 1                ; so the jz1 at the top won't jump next time
+ps2 @turn
