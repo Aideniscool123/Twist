@@ -49,7 +49,6 @@ node bin/twist.js check examples                 # check programs for mistakes
 node bin/twist.js list                           # list every instruction
 node bin/twist.js explain ps1                    # explain one instruction
 npm test                                         # run the tests
-npm run docs                                     # regenerate the reference and gallery
 ```
 
 Twist's remarks (mood changes, refusals, complaints) go to stderr, so they
@@ -57,16 +56,16 @@ never get mixed into what your program prints.
 
 ## Docs
 
-**Website:** https://aideniscool123.github.io/Twist/: the tutorial, a page
-for every instruction and example, the language guide, the playground and
-the dev log. Its source is in [website/](website).
+All the docs are on the website: **https://aideniscool123.github.io/Twist/**
 
-- [Tutorial](docs/TUTORIAL.md): learn Twist in 15 minutes
-- [Example gallery](docs/GALLERY.md): every example with its real output (generated)
-- [Instruction reference](docs/INSTRUCTIONS.md): all 42 instructions (generated)
-- [Design](docs/DESIGN.md): the chaos rule, values, mood, Reverse Vibes and Swap Words
-- [Syntax](docs/SYNTAX.md): what a line of Twist looks like
-- [Architecture](docs/ARCHITECTURE.md): how the code fits together, and how to add an instruction
+- [Tutorial](https://aideniscool123.github.io/Twist/docs/tutorial): learn Twist in 15 minutes
+- [Language guide](https://aideniscool123.github.io/Twist/docs/language): the exact rules, including mood, Reverse Vibes and Swap Words
+- [Instruction reference](https://aideniscool123.github.io/Twist/docs/reference/instructions): a page for each of the 42 instructions
+- [Examples](https://aideniscool123.github.io/Twist/docs/examples): every example with its real output
+- [Internals](https://aideniscool123.github.io/Twist/docs/internals): how the code fits together, and how to add an instruction
+- [Playground](https://aideniscool123.github.io/Twist/play/playground/) and [dev log](https://aideniscool123.github.io/Twist/blog)
+
+The site's source is in [website/](website).
 
 ## Roadmap
 

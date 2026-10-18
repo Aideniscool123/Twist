@@ -1,4 +1,4 @@
-// Twist's moods, from livid (-3) to ecstatic (3). See docs/DESIGN.md.
+// Twist's moods, from livid (-3) to ecstatic (3). See website/docs/language/mood-system.md.
 
 export const MOODS = Object.freeze({
   [-3]: "livid",

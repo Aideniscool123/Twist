@@ -67,19 +67,19 @@ it("picks something from the list", () => {
 });
 ```
 
-## 5. Regenerate the docs
+## 5. Run the tests
 
 ```bash
-npm run docs
 npm test
 ```
 
 The tests check that every instruction has an example the checker accepts,
-that the chaos rule holds, and that the generated docs are up to date.
+and that the chaos rule holds.
 
 ## 6. Give it a sass line (optional)
 
 If it has its own error, add a pattern and remark to `SPECIFIC` in
 `src/language/sass.js`.
 
-Its page on this site is generated automatically on the next build.
+There's no doc page to write: the instruction's page on this site, with a
+working demo, is generated from the table on the next build.
