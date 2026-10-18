@@ -1,0 +1,25 @@
+; primes.twist - every prime number up to 30
+ps3 #0 2                ; the number we're testing
+@next:
+ps3 #9 #0
+gt1 #9 30
+jz1 #9 @test
+hl1
+@test:
+ps3 #1 2                ; try dividing by 2, 3, 4...
+@divide:
+ps3 #2 #1
+mu1 #2 #1
+gt1 #2 #0               ; past the square root? then it's prime
+jz1 #2 @try
+ad3 #0
+ps2 @advance
+@try:
+ps3 #3 #0
+md1 #3 #1
+jz1 #3 @advance         ; it divides evenly, so not prime
+ad1 #1 1
+ps2 @divide
+@advance:
+ad1 #0 1
+ps2 @next

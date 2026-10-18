@@ -1,0 +1,17 @@
+; factorial.twist - 6! worked out with a function that calls itself
+ps3 #0 6                ; n
+ps3 #1 1                ; the answer builds up here
+cl1 @fact
+sy1 "6! = "
+ad3 #1
+hl1
+
+; fact: multiplies #1 by n, n-1, ... 1. Leaves #0 as it found it.
+@fact:
+jz1 #0 @bottom
+ad1 #0 -1
+cl1 @fact               ; do the rest first...
+ad1 #0 1
+mu1 #1 #0               ; ...then multiply on the way back up
+@bottom:
+rt1
