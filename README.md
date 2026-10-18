@@ -17,9 +17,8 @@ ps2 @again        ; pounce back up
 ps1 "Liftoff!"
 ```
 
-> **Status:** Phases 1 and 2 are done. Twist has 42 instructions (with dice,
-moods, reverse gear and Swap Words) and a checker, but no interpreter yet, so
-programs can be checked but not run.
+> **Status:** Phases 1-4 are done. The interpreter runs hello world, math,
+input and output. Jumps, lists and the chaos come next.
 
 ## Requirements
 
@@ -47,7 +46,7 @@ npm run docs                      # regenerate docs/INSTRUCTIONS.md
 - [x] Phase 1: Design the language rules and first instructions
 - [x] Phase 2: Finish the instruction set (make it Turing complete)
 - [x] Phase 3: Build the lexer and parser
-- [ ] Phase 4: Build the core interpreter (hello world)
+- [x] Phase 4: Build the core interpreter (hello world)
 - [ ] Phase 5: Add control flow (labels, jumps, loops, call/return)
 - [ ] Phase 6: Add strings, lists, and the weird instructions
 - [ ] Phase 7: Add error messages, tests, and the `run` CLI/REPL
