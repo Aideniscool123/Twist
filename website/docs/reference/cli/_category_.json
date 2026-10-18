@@ -1,0 +1,5 @@
+{
+  "label": "Command line",
+  "position": 4,
+  "link": { "type": "doc", "id": "reference/cli/overview" }
+}

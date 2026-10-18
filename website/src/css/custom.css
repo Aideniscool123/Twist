@@ -1,0 +1,89 @@
+/* Twist's colors and fonts, matching the playground. */
+
+:root {
+  --ifm-color-primary: #7c3aed;
+  --ifm-color-primary-dark: #6d28d9;
+  --ifm-color-primary-darker: #6422cc;
+  --ifm-color-primary-darkest: #5b21b6;
+  --ifm-color-primary-light: #8b5cf6;
+  --ifm-color-primary-lighter: #9b72f7;
+  --ifm-color-primary-lightest: #a78bfa;
+  --ifm-font-family-base: "Space Grotesk", system-ui, -apple-system, "Segoe UI", sans-serif;
+  --ifm-font-family-monospace: "JetBrains Mono", ui-monospace, Consolas, monospace;
+  --ifm-heading-font-weight: 700;
+  --ifm-code-font-size: 92%;
+  --ifm-navbar-shadow: 0 1px 0 rgba(60, 40, 120, 0.1);
+  --docusaurus-highlighted-code-line-bg: rgba(124, 58, 237, 0.12);
+
+  --twist-pink: #db2777;
+  --twist-cyan: #0891b2;
+  --twist-gradient: linear-gradient(100deg, #7c3aed, #db2777 55%, #0891b2);
+}
+
+[data-theme="dark"] {
+  --ifm-color-primary: #a78bfa;
+  --ifm-color-primary-dark: #8b5cf6;
+  --ifm-color-primary-darker: #7c3aed;
+  --ifm-color-primary-darkest: #6d28d9;
+  --ifm-color-primary-light: #c4b5fd;
+  --ifm-color-primary-lighter: #ddd6fe;
+  --ifm-color-primary-lightest: #ede9fe;
+  --ifm-background-color: #0c0a17;
+  --ifm-background-surface-color: #141028;
+  --ifm-navbar-background-color: rgba(12, 10, 23, 0.85);
+  --ifm-footer-background-color: #08060f;
+  --docusaurus-highlighted-code-line-bg: rgba(167, 139, 250, 0.16);
+
+  --twist-pink: #f472b6;
+  --twist-cyan: #22d3ee;
+  --twist-gradient: linear-gradient(100deg, #a78bfa, #f472b6 55%, #22d3ee);
+}
+
+/* Infima leaves the light background transparent, which shows a dark page
+   through it when the computer is in dark mode. Set both explicitly. */
+[data-theme="light"] {
+  --ifm-background-color: #ffffff;
+  color-scheme: light;
+}
+
+[data-theme="dark"] {
+  color-scheme: dark;
+}
+
+html {
+  background-color: var(--ifm-background-color);
+}
+
+.navbar {
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+}
+
+.navbar__title {
+  background: var(--twist-gradient);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  font-size: 1.35rem;
+  letter-spacing: -0.03em;
+}
+
+h1 {
+  letter-spacing: -0.02em;
+}
+
+/* Twist code blocks: chaos instructions glow a little */
+.language-twist .token.important {
+  font-weight: 700;
+  text-shadow: 0 0 10px rgba(244, 114, 182, 0.35);
+}
+
+/* the "Twist says" admonition-style aside used in the tutorial */
+.twist-says {
+  border-left: 4px solid var(--twist-pink);
+  padding: 0.6rem 1rem;
+  margin-bottom: var(--ifm-leading);
+  border-radius: 0 8px 8px 0;
+  background: color-mix(in srgb, var(--twist-pink) 8%, transparent);
+  font-style: italic;
+}

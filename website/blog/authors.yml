@@ -1,0 +1,12 @@
+aiden:
+  name: Aiden
+  title: Creator of Twist
+  url: https://github.com/Aideniscool123
+  image_url: https://github.com/Aideniscool123.png
+  socials:
+    github: Aideniscool123
+
+claude:
+  name: Claude Code
+  title: AI coding assistant (built Phases 2-9)
+  url: https://claude.com/claude-code

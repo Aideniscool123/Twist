@@ -53,6 +53,6 @@ function pick(list, text) {
 /** Add a remark to a plain error message: "Unknown instruction zz9. Did you just make that up?" */
 export function sass(message) {
   const remark = SPECIFIC.find(([pattern]) => pattern.test(message))?.[1] ?? pick(GENERIC, message);
-  const ending = /[.!?)]$/.test(message) ? "" : ".";
+  const ending = /[.!?]$/.test(message) ? "" : ".";
   return `${message}${ending} ${remark}`;
 }

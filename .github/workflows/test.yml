@@ -1,0 +1,26 @@
+# Runs Twist's tests and checks the docs site still builds, on every pull
+# request. Nothing is published.
+
+name: Test
+
+on:
+  pull_request:
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: website/package-lock.json
+      - name: Run Twist's tests
+        run: npm test
+      - name: Install the site's packages
+        working-directory: website
+        run: npm ci
+      - name: Build the site
+        working-directory: website
+        run: npm run build
