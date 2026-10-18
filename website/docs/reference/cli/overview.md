@@ -54,5 +54,4 @@ From the Twist folder:
 | --- | --- |
 | `npm test` | Runs every test |
 | `npm run playground` | Serves the playground at http://localhost:8080 |
-| `npm run docs` | Regenerates `docs/INSTRUCTIONS.md` and `docs/GALLERY.md` |
 | `npm run check:examples` | Checks every program in `examples/` |

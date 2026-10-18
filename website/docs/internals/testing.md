@@ -27,9 +27,7 @@ nothing to install.
 | `chaos.test.js` | Dice, Swap Words, Reverse Vibes, mood |
 | `cli.test.js` | Every command, through the real `bin/twist.js` too |
 | `sass.test.js` | The remarks |
-| `examples.test.js` | Every example passes the checker |
-| `docs.test.js` | `INSTRUCTIONS.md` and `GALLERY.md` are up to date |
-| `tutorial.test.js` | Every snippet in `docs/TUTORIAL.md` prints what it claims |
+| `examples.test.js` | Every example passes the checker and runs to the end |
 | `site.test.js` | Every snippet on this website prints what it claims |
 | `playground.test.js` | Highlighting, the examples menu, no Node-only code |
 
@@ -50,7 +48,7 @@ calm(source, { random: () => 0.9 }).output; // "tails\n"
 
 ## Docs that test themselves
 
-The tutorial and every page on this site are tested: a test finds each
+Every page on this site is tested: `site.test.js` finds each
 ` ```twist ` block, runs it, and compares the result to the ` ```text ` block
 right after it. If you change how Twist behaves, the docs that describe it
 fail, and you find out right away.

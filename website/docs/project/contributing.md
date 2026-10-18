@@ -25,8 +25,8 @@ npm start
 ## Ways to help
 
 - **Write an example program.** Add it to `examples/` and to
-  `playground/examples.js`, then run `npm run docs`. It appears in the
-  gallery, the playground and this site.
+  `playground/examples.js`. It appears in the playground, and gets its own
+  page on this site with its real output.
 - **Add an instruction.** Follow
   [Adding an instruction](/docs/internals/adding-an-instruction). Make it
   confusing.

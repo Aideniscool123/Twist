@@ -10,7 +10,6 @@
   },
   "scripts": {
     "test": "node --test",
-    "docs": "node scripts/generate-docs.js",
     "check:examples": "node bin/twist.js check examples",
     "playground": "node scripts/serve.js"
   },

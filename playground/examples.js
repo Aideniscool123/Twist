@@ -1,8 +1,9 @@
 // The example programs, in menu order. The playground's Examples menu and the
-// gallery (docs/GALLERY.md) are both built from this list, and a test checks
-// it against the examples/ folder.
+// website's example pages are both built from this list, and a test checks it
+// against the examples/ folder.
 //
-// `input` is what the gallery types in when it runs the example.
+// `input` is what gets typed in when the example runs: the playground fills
+// its input box with it, and the website shows the output it produces.
 
 export const EXAMPLES = [
   { file: "hello.twist", title: "Hello, reef!", description: "The classic first program." },

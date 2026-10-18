@@ -40,7 +40,6 @@ Each stage has its own page: [lexer](./lexer), [parser](./parser),
 | `src/cli.js`, `bin/twist.js` | The `twist` command |
 | `src/repl.js` | The REPL |
 | `src/stdin.js` | Reads input synchronously, so a program can ask for it mid-instruction |
-| `src/gallery.js` | Builds `docs/GALLERY.md` |
 | `playground/` | The web playground |
 | `website/` | This site |
 | `examples/` | Example programs |
