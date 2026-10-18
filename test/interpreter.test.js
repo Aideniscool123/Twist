@@ -4,7 +4,7 @@ import { readFileSync } from "node:fs";
 import { Machine, TwistCheckError, TwistRuntimeError, loadProgram, runProgram } from "../src/runtime/index.js";
 
 const example = (name) => readFileSync(new URL(`../examples/${name}`, import.meta.url), "utf8");
-const out = (source, options) => runProgram(source, options).output;
+const out = (source, options) => runProgram(source, { calm: true, ...options }).output;
 
 describe("hello world", () => {
   it("runs examples/hello.twist", () => {
@@ -99,7 +99,7 @@ describe("math", () => {
   });
 
   it("turns dividing by zero into 0 and a note instead of a crash", () => {
-    const result = runProgram("ps3 #0 9\ndv1 #0 0\nad3 #0\nps3 #1 9\nmd1 #1 #7\nad3 #1");
+    const result = runProgram("ps3 #0 9\ndv1 #0 0\nad3 #0\nps3 #1 9\nmd1 #1 #7\nad3 #1", { calm: true });
     assert.equal(result.output, "0\n0\n");
     assert.equal(result.notes.length, 2);
     assert.match(result.notes[0], /^line 2: dividing by zero/);
@@ -118,7 +118,7 @@ describe("running", () => {
 
   it("can be run one step at a time", () => {
     const printed = [];
-    const machine = new Machine(loadProgram('ps1 "a"\nps3 #0 2\nhl1\nps1 "b"'), { output: (text) => printed.push(text) });
+    const machine = new Machine(loadProgram('ps1 "a"\nps3 #0 2\nhl1\nps1 "b"'), { calm: true, output: (text) => printed.push(text) });
     assert.equal(machine.current.code, "ps1");
     assert.equal(machine.step(), true);
     assert.deepEqual(printed, ["a\n"]);
@@ -142,7 +142,7 @@ describe("running", () => {
 
   it("keeps the output printed before a runtime error", () => {
     try {
-      runProgram('ps1 "before"\nps3 #0 "x"\nmu1 #0 2');
+      runProgram('ps1 "before"\nps3 #0 "x"\nmu1 #0 2', { calm: true });
       assert.fail("should have thrown");
     } catch (error) {
       assert.equal(error.output, "before\n");

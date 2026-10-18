@@ -7,7 +7,17 @@
 
 import { BEHAVIORS } from "./behaviors.js";
 import { Oops, TwistCheckError, TwistRuntimeError } from "./errors.js";
-import { copyValue, describeValue, typeOf, ValueType } from "./values.js";
+import { copyValue, describeValue, formatValue, typeOf, ValueType } from "./values.js";
+import { CALM_SEED, randomSeed, seededRandom } from "./random.js";
+import {
+  HIGHEST_MOOD,
+  JUMPS_PER_DIZZY_SPELL,
+  LOWEST_MOOD,
+  RANDOM_SWING_ODDS,
+  REFUSAL_CHANCE,
+  moodName,
+  moodify,
+} from "./mood.js";
 import { validateProgram } from "../language/validate.js";
 
 export const DEFAULT_MAX_STEPS = 1_000_000;
@@ -36,6 +46,9 @@ export class Machine {
    *   output    (text) => void        where printed text goes
    *   note      (text) => void        where Twist's remarks go (kept apart from output)
    *   maxSteps  stop with an error after this many steps (default 1,000,000)
+   *   calm      true to keep the mood at chill and use a fixed random seed
+   *   seed      a number, to make dice, coins and mood swings repeatable
+   *   random    () => number in [0, 1), to supply randomness directly (tests)
    */
   constructor(program, options = {}) {
     this.program = program;
@@ -43,6 +56,9 @@ export class Machine {
     this.output = options.output ?? (() => {});
     this.note = options.note ?? (() => {});
     this.maxSteps = options.maxSteps ?? DEFAULT_MAX_STEPS;
+    this.calm = Boolean(options.calm);
+    this.seed = options.seed ?? (this.calm ? CALM_SEED : randomSeed());
+    this.random = options.random ?? seededRandom(this.seed);
 
     this.cells = new Map();
     this.pc = 0;
@@ -51,6 +67,8 @@ export class Machine {
     this.steps = 0;
     this.jumps = 0;
     this.callStack = [];
+    this.swaps = new Map();
+    this.mood = 0;
     this.running = null;
     this.next = 0;
   }
@@ -68,9 +86,9 @@ export class Machine {
     this.cells.set(index, value);
   }
 
-  /** Print text. Output always goes through here. */
+  /** Print text. Output always goes through here, so the mood can mess with it. */
   print(text) {
-    this.output(text);
+    this.output(moodify(text, this.mood));
   }
 
   printLine(text) {
@@ -122,12 +140,69 @@ export class Machine {
     this.next = frame.returnTo;
   }
 
-  /** Called after every jump. The mood system (Phase 6) listens here. */
-  jumped() {}
+  /** Called after every jump. Too much jumping makes Twist dizzy. */
+  jumped() {
+    if (this.jumps % JUMPS_PER_DIZZY_SPELL === 0) this.changeMood(-1, "all this jumping around is making it dizzy");
+  }
 
   /** dv1 and md1 call this instead of crashing. */
   dividedByZero() {
-    this.note(`line ${this.running.instruction.line}: dividing by zero? Fine, it's 0 now. Twist is not amused.`);
+    this.remark("dividing by zero? Fine, it's 0 now. Twist is not amused.");
+    this.changeMood(-2, "you divided by zero");
+  }
+
+  // --- the chaos --------------------------------------------------------------
+
+  /** A remark from Twist about the current line. Remarks go to `note`, never to the output. */
+  remark(text) {
+    const line = this.running?.instruction.line;
+    this.note(line === undefined ? text : `line ${line}: ${text}`);
+  }
+
+  get moodName() {
+    return moodName(this.mood);
+  }
+
+  /** Nudge the mood up or down. Calm Twist doesn't have feelings. */
+  changeMood(delta, reason) {
+    if (this.calm) return;
+    const mood = Math.max(LOWEST_MOOD, Math.min(HIGHEST_MOOD, this.mood + delta));
+    if (mood === this.mood) return;
+    this.mood = mood;
+    this.remark(`Twist is ${this.moodName} now (${reason}).`);
+  }
+
+  /** A random whole number from 1 to `sides`. */
+  roll(sides) {
+    return 1 + Math.floor(this.random() * sides);
+  }
+
+  /** sw1: swap the jobs of two codes. Swapping again swaps them back. */
+  swapJobs(first, second) {
+    const firstJob = this.jobOf(first);
+    const secondJob = this.jobOf(second);
+    const assign = (code, job) => (code === job ? this.swaps.delete(code) : this.swaps.set(code, job));
+    assign(first, secondJob);
+    assign(second, firstJob);
+  }
+
+  /** rv1: turn around. */
+  reverse() {
+    this.direction = -this.direction;
+    this.next = this.pc + this.direction;
+  }
+
+  // Before each instruction: maybe a random mood swing, and maybe a refusal.
+  // Returns true if Twist refuses to run this one.
+  moodCheck(job) {
+    if (this.calm) return false;
+    if (this.random() * RANDOM_SWING_ODDS < 1) {
+      this.changeMood(this.random() < 0.5 ? -1 : 1, "no reason at all");
+    }
+    const chance = REFUSAL_CHANCE[this.mood] ?? 0;
+    if (job === "ty1" || chance === 0 || this.random() >= chance) return false;
+    this.remark(`Twist is ${this.moodName} and refuses to run ${this.running.instruction.code}. Maybe try ty1?`);
+    return true;
   }
 
   // --- operand helpers for behaviors.js -------------------------------------
@@ -175,6 +250,34 @@ export class Machine {
     return this.numberOf(operand);
   }
 
+  /** The text in a cell (for instructions that change text in place). */
+  textIn(operand) {
+    this.cellOf(operand);
+    return this.textOf(operand);
+  }
+
+  /** The list in a cell. Lists are changed in place, so this is the real list, not a copy. */
+  listIn(operand) {
+    const value = this.read(this.cellOf(operand));
+    if (typeOf(value) !== ValueType.LIST) {
+      throw new Oops(`${this.who} needs a list, but ${operand.text} is ${describeValue(value)}. Make one with mk1`);
+    }
+    return value;
+  }
+
+  /** A whole number for counting: an index, or a number of dice sides. */
+  wholeNumberOf(operand) {
+    const value = this.numberOf(operand);
+    if (!Number.isInteger(value)) throw new Oops(`${this.who} needs a whole number, but ${operand.text} is ${formatValue(value)}`);
+    return value;
+  }
+
+  /** The instruction code an operand names (for sw1). */
+  codeOf(operand) {
+    if (operand.kind !== "code") throw new Oops(`${this.who} wants an instruction code like ps1 here, but got ${operand.text}`);
+    return operand.value;
+  }
+
   /** The string an operand holds, for instructions that take a string literal. */
   stringOf(operand) {
     if (operand.kind !== "string") throw new Oops(`${this.who} wants a string in quotes here, but got ${operand.text}`);
@@ -208,7 +311,7 @@ export class Machine {
     try {
       const behavior = BEHAVIORS[job];
       if (!behavior) throw new Oops(`${job} isn't built yet`);
-      behavior(this, instruction.operands);
+      if (!this.moodCheck(job)) behavior(this, instruction.operands);
     } catch (error) {
       if (!(error instanceof Oops)) throw error;
       this.halted = true;
@@ -224,9 +327,9 @@ export class Machine {
     return !this.halted;
   }
 
-  /** Which instruction's job a code is doing right now. */
+  /** Which instruction's job a code is doing right now (sw1 can change it). */
   jobOf(code) {
-    return code;
+    return this.swaps.get(code) ?? code;
   }
 
   /** Keep stepping until the program stops. */

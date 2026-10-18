@@ -6,7 +6,7 @@
 // job) and throw Oops with a message when something is wrong.
 
 import { Oops } from "./errors.js";
-import { copyValue, formatValue, isEmpty, valuesEqual } from "./values.js";
+import { copyValue, describeValue, formatValue, isEmpty, valuesEqual } from "./values.js";
 
 const NUMBER_INPUT = /^[+-]?(\d+(\.\d*)?|\.\d+)$/;
 
@@ -16,6 +16,17 @@ function readNumber(m) {
   const text = line.trim();
   if (!NUMBER_INPUT.test(text)) throw new Oops(`${m.who} asked for a number, but got ${JSON.stringify(line)}`);
   return Number(text) || 0; // || 0 turns -0 into 0
+}
+
+// Check an index into a list or text and return it.
+function checkIndex(m, items, where, operand) {
+  const index = m.wholeNumberOf(operand);
+  if (index < 0 || index >= items.length) {
+    const what = typeof items === "string" ? "letters" : "items";
+    const range = items.length === 0 ? "it's empty" : `it only has ${items.length} ${what} (0 to ${items.length - 1})`;
+    throw new Oops(`${m.who} wants item ${index} of ${where.text}, but ${range}`);
+  }
+  return index;
 }
 
 // Change the number in a cell: `ad1 #0 5` is math(m, ops, (a, b) => a + b).
@@ -50,6 +61,9 @@ export const BEHAVIORS = {
   sy1(m, [value]) {
     m.print(formatValue(m.valueOf(value)));
   },
+  mo1(m) {
+    m.printLine(m.moodName);
+  },
 
   // input
   ad2(m, [cell]) {
@@ -77,6 +91,9 @@ export const BEHAVIORS = {
   },
   cl3(m, [cell]) {
     m.write(m.cellOf(cell), 0);
+  },
+  mo2(m, [cell]) {
+    m.write(m.cellOf(cell), m.moodName);
   },
 
   // math
@@ -123,6 +140,86 @@ export const BEHAVIORS = {
   },
   hl1(m) {
     m.stop();
+  },
+
+  // text
+  jn2(m, [cell, value]) {
+    const index = m.cellOf(cell);
+    m.write(index, formatValue(m.read(index)) + formatValue(m.valueOf(value)));
+  },
+  up1(m, [cell]) {
+    m.write(m.cellOf(cell), m.textIn(cell).toUpperCase());
+  },
+  sp1(m, [cell, separator]) {
+    m.write(m.cellOf(cell), m.textIn(cell).split(m.textOf(separator)));
+  },
+  nm1(m, [cell]) {
+    const index = m.cellOf(cell);
+    const value = m.read(index);
+    if (typeof value === "number") return;
+    if (Array.isArray(value)) throw new Oops(`${m.who} can't turn a list into a number`);
+    const text = value.trim();
+    if (!NUMBER_INPUT.test(text)) throw new Oops(`${m.who} can't turn ${JSON.stringify(value)} into a number`);
+    m.write(index, Number(text) || 0);
+  },
+
+  // list
+  mk1(m, [cell]) {
+    m.write(m.cellOf(cell), []);
+  },
+  ps4(m, [list, value]) {
+    m.listIn(list).push(copyValue(m.valueOf(value)));
+  },
+  pp1(m, [list, into]) {
+    const items = m.listIn(list);
+    const target = m.cellOf(into);
+    if (items.length === 0) throw new Oops(`${m.who} can't pop anything off ${list.text}, the list is empty`);
+    m.write(target, items.pop());
+  },
+  gt2(m, [into, from, index]) {
+    const target = m.cellOf(into);
+    const source = m.read(m.cellOf(from));
+    if (typeof source === "number") throw new Oops(`${m.who} needs a list or text, but ${from.text} is ${describeValue(source)}`);
+    const position = checkIndex(m, source, from, index);
+    m.write(target, typeof source === "string" ? source[position] : copyValue(source[position]));
+  },
+  st1(m, [list, index, value]) {
+    const items = m.listIn(list);
+    items[checkIndex(m, items, list, index)] = copyValue(m.valueOf(value));
+  },
+  ln1(m, [into, of]) {
+    const target = m.cellOf(into);
+    const value = m.valueOf(of);
+    if (typeof value === "number") throw new Oops(`${m.who} can measure a list or text, but ${of.text} is ${describeValue(value)}`);
+    m.write(target, value.length);
+  },
+
+  // chaos
+  rd2(m, [cell, sides]) {
+    const target = m.cellOf(cell);
+    const count = m.wholeNumberOf(sides);
+    if (count < 1) throw new Oops(`${m.who} can't roll a dice with ${count} sides`);
+    m.write(target, m.roll(count));
+  },
+  cl2(m, [target]) {
+    m.labelOf(target);
+    if (m.random() < 0.5) m.jump(target);
+  },
+  sh1(m, [list]) {
+    const items = m.listIn(list);
+    for (let i = items.length - 1; i > 0; i -= 1) {
+      const j = m.roll(i + 1) - 1;
+      [items[i], items[j]] = [items[j], items[i]];
+    }
+  },
+  sw1(m, [first, second]) {
+    m.swapJobs(m.codeOf(first), m.codeOf(second));
+  },
+  rv1(m) {
+    m.reverse();
+  },
+  ty1(m) {
+    m.changeMood(1, "it appreciates the compliment");
   },
 
   // misc
