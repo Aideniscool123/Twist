@@ -2,7 +2,7 @@
 slug: phase-5-control-flow
 title: "Phase 5: Loops, calls and FizzBuzz"
 date: 2026-10-17T23:24:00
-authors: [aiden, claude]
+authors: [aiden]
 tags: [devlog, interpreter]
 ---
 

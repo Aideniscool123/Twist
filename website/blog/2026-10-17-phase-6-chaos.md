@@ -2,7 +2,7 @@
 slug: phase-6-chaos
 title: "Phase 6: Twist gets feelings"
 date: 2026-10-17T23:28:00
-authors: [aiden, claude]
+authors: [aiden]
 tags: [devlog, chaos]
 ---
 

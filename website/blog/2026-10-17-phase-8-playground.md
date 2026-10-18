@@ -2,7 +2,7 @@
 slug: phase-8-playground
 title: "Phase 8: The playground"
 date: 2026-10-17T23:37:00
-authors: [aiden, claude]
+authors: [aiden]
 tags: [devlog, tools]
 ---
 
