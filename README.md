@@ -17,8 +17,8 @@ ps2 @again        ; pounce back up
 ps1 "Liftoff!"
 ```
 
-> **Status:** Phases 1-4 are done. The interpreter runs hello world, math,
-input and output. Jumps, lists and the chaos come next.
+> **Status:** Phases 1-5 are done. The interpreter runs loops, calls and
+FizzBuzz. Lists, text and the chaos come next.
 
 ## Requirements
 
@@ -47,7 +47,7 @@ npm run docs                      # regenerate docs/INSTRUCTIONS.md
 - [x] Phase 2: Finish the instruction set (make it Turing complete)
 - [x] Phase 3: Build the lexer and parser
 - [x] Phase 4: Build the core interpreter (hello world)
-- [ ] Phase 5: Add control flow (labels, jumps, loops, call/return)
+- [x] Phase 5: Add control flow (labels, jumps, loops, call/return)
 - [ ] Phase 6: Add strings, lists, and the weird instructions
 - [ ] Phase 7: Add error messages, tests, and the `run` CLI/REPL
 - [ ] Phase 8: Build the web playground

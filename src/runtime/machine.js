@@ -12,6 +12,9 @@ import { validateProgram } from "../language/validate.js";
 
 export const DEFAULT_MAX_STEPS = 1_000_000;
 
+/** How deep cl1 calls can nest before Twist assumes something went wrong. */
+export const MAX_CALL_DEPTH = 10_000;
+
 /** Make an `input` function that hands out these lines one at a time, then null. */
 export function inputFromLines(lines) {
   const queue = [...lines];
@@ -46,6 +49,8 @@ export class Machine {
     this.direction = 1;
     this.halted = program.instructions.length === 0;
     this.steps = 0;
+    this.jumps = 0;
+    this.callStack = [];
     this.running = null;
     this.next = 0;
   }
@@ -80,6 +85,45 @@ export class Machine {
   stop() {
     this.halted = true;
   }
+
+  // --- control flow -----------------------------------------------------------
+
+  /** The label an operand names. */
+  labelOf(operand) {
+    if (operand.kind !== "label") throw new Oops(`${this.who} wants a label like @loop here, but got ${operand.text}`);
+    return operand.value;
+  }
+
+  /**
+   * Jump to a label. Execution carries on from the instruction after the label
+   * in the direction Twist is going: below it normally, above it in reverse.
+   */
+  jump(operand) {
+    const { index } = this.program.labels.get(this.labelOf(operand));
+    this.next = this.direction === 1 ? index : index - 1;
+    this.jumps += 1;
+    this.jumped();
+  }
+
+  /** cl1: remember where to come back to (and which way we were going), then jump. */
+  call(operand) {
+    if (this.callStack.length >= MAX_CALL_DEPTH) {
+      throw new Oops(`${this.who} called ${MAX_CALL_DEPTH.toLocaleString("en-US")} levels deep without coming back. Is something calling itself forever?`);
+    }
+    this.callStack.push({ returnTo: this.pc + this.direction, direction: this.direction });
+    this.jump(operand);
+  }
+
+  /** rt1: go back to just after the most recent cl1. */
+  returnFromCall() {
+    const frame = this.callStack.pop();
+    if (!frame) throw new Oops(`${this.who} wants to return, but nothing called it. There's nowhere to go back to`);
+    this.direction = frame.direction;
+    this.next = frame.returnTo;
+  }
+
+  /** Called after every jump. The mood system (Phase 6) listens here. */
+  jumped() {}
 
   /** dv1 and md1 call this instead of crashing. */
   dividedByZero() {
