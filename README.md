@@ -5,21 +5,46 @@ number stuck to it, and `ps1` and `ps2` have **nothing** to do with each other.
 
 The name is the whole idea: `ps2` is the plot twist after `ps1`.
 
-> **Status:** Phase 1 (Design) is in progress. There is no interpreter yet.
+```
+; count down from 3
+ps3 #0 3          ; plant a seed: cell 0 = 3
+@again:
+jz1 #0 @done      ; if cell 0 is zero, jump to done
+ad3 #0            ; announce the number
+ad1 #0 -1         ; subtract one
+ps2 @again        ; pounce back up
+@done:
+ps1 "Liftoff!"
+```
+
+> **Status:** Phase 1 (Design) is done. The language has rules, ten
+> instructions and a checker, but there is no interpreter yet, so programs
+> can be checked but not run.
 
 ## Requirements
 
 - Node.js 18 or newer. There are no other dependencies and nothing to install.
 
-## Run the tests
+## Try it
 
 ```
-npm test
+npm test                          # run the tests
+npm run check:examples            # check every program in examples/
+node bin/twist.js list         # list every instruction
+node bin/twist.js explain ps1  # explain one instruction
+node bin/twist.js check examples/countdown.twist
+npm run docs                      # regenerate docs/INSTRUCTIONS.md
 ```
+
+## Docs
+
+- [Design](docs/DESIGN.md): the chaos rule, memory, and why it can compute anything
+- [Syntax](docs/SYNTAX.md): what a line of Twist looks like
+- [Instruction reference](docs/INSTRUCTIONS.md): every instruction (generated)
 
 ## Roadmap
 
-- [ ] Phase 1: Design the language rules and first instructions
+- [x] Phase 1: Design the language rules and first instructions
 - [ ] Phase 2: Finish the instruction set (make it Turing complete)
 - [ ] Phase 3: Build the lexer and parser
 - [ ] Phase 4: Build the core interpreter (hello world)

@@ -5,8 +5,13 @@
   "private": true,
   "type": "module",
   "main": "src/index.js",
+  "bin": {
+    "twist": "bin/twist.js"
+  },
   "scripts": {
-    "test": "node --test"
+    "test": "node --test",
+    "docs": "node scripts/generate-docs.js",
+    "check:examples": "node bin/twist.js check examples"
   },
   "engines": {
     "node": ">=18"
