@@ -1,22 +1,57 @@
-// The `twist` command line tool.
-//
-// For now it helps with language design: list and explain instructions, and
-// check programs for mistakes. Phase 7 adds `run` and a REPL.
+// The `twist` command line tool: run programs, check them, explore the
+// instruction set, or play in the REPL.
 
 import { readFileSync, readdirSync, statSync } from "node:fs";
 import { join } from "node:path";
 import { NAME, TAGLINE, VERSION } from "./index.js";
 import { INSTRUCTIONS, getInstruction, groupByMnemonic } from "./language/instructions.js";
 import { validateProgram } from "./language/validate.js";
+import { sass } from "./language/sass.js";
+import { runProgram } from "./runtime/machine.js";
+import { TwistCheckError, TwistRuntimeError } from "./runtime/errors.js";
+import { createLineReader } from "./stdin.js";
+import { runRepl } from "./repl.js";
 
 const USAGE = `${NAME} ${VERSION} - ${TAGLINE}
 
 Usage:
-  twist list               List every instruction
-  twist explain <code>     Explain one instruction, for example: twist explain ps1
-  twist check <path...>    Check .twist files (or folders of them) for mistakes
-  twist --version          Show the version
-  twist --help             Show this help`;
+  twist run <file> [options]   Run a .twist program
+  twist repl [options]         Type Twist one line at a time
+  twist check <path...>        Check .twist files (or folders of them) for mistakes
+  twist list                   List every instruction
+  twist explain <code>         Explain one instruction, for example: twist explain ps1
+  twist --version              Show the version
+  twist --help                 Show this help
+
+Options for run and repl:
+  --calm              No mood swings, and the same dice rolls every time
+  --seed <number>     Keep the chaos, but make the randomness repeatable
+  --max-steps <n>     Give up after this many steps (default 1,000,000)`;
+
+// Read --calm, --seed and --max-steps. Returns { options, rest } or { error }.
+function parseRunOptions(args) {
+  const options = {};
+  const rest = [];
+  for (let i = 0; i < args.length; i += 1) {
+    const arg = args[i];
+    if (arg === "--calm") {
+      options.calm = true;
+    } else if (arg === "--seed" || arg === "--max-steps") {
+      const value = Number(args[i + 1]);
+      if (args[i + 1] === undefined || !Number.isInteger(value) || value < 0) {
+        return { error: `${arg} needs a whole number after it` };
+      }
+      if (arg === "--seed") options.seed = value;
+      else options.maxSteps = value;
+      i += 1;
+    } else if (arg.startsWith("--")) {
+      return { error: `Unknown option ${arg}` };
+    } else {
+      rest.push(arg);
+    }
+  }
+  return { options, rest };
+}
 
 function listCommand(print) {
   const header = { code: "CODE", name: "NAME", category: "CATEGORY", example: "EXAMPLE" };
@@ -41,7 +76,7 @@ function explainCommand(args, print, fail) {
 
   const instruction = getInstruction(args[0].toLowerCase());
   if (!instruction) {
-    fail(`Unknown instruction "${args[0]}". Try "twist list".`);
+    fail(sass(`Unknown instruction "${args[0]}". Try "twist list"`));
     return 1;
   }
 
@@ -115,12 +150,63 @@ function checkCommand(args, print, fail) {
       const count = result.instructions.length;
       print(`${file}: ok (${count} instruction${count === 1 ? "" : "s"})`);
     } else {
-      for (const error of result.errors) fail(`${file}:${error.line}: ${error.message}`);
+      for (const error of result.errors) fail(`${file}:${error.line}: ${sass(error.message)}`);
       failed += 1;
     }
   }
 
   return failed === 0 ? 0 : 1;
+}
+
+function runCommand(args, io, print, fail) {
+  const parsed = parseRunOptions(args);
+  if (parsed.error || parsed.rest.length !== 1) {
+    fail(parsed.error ?? "Usage: twist run <file.twist> [--calm] [--seed <number>] [--max-steps <n>]");
+    return 2;
+  }
+
+  const [file] = parsed.rest;
+  let source;
+  try {
+    source = readFileSync(file, "utf8");
+  } catch {
+    fail(`Can't read ${file}`);
+    return 1;
+  }
+
+  try {
+    runProgram(source, {
+      ...parsed.options,
+      input: io.input ?? createLineReader(),
+      output: (text) => io.out.write(text),
+      note: (text) => io.err.write(`(twist) ${text}\n`),
+    });
+    return 0;
+  } catch (error) {
+    if (error instanceof TwistCheckError) {
+      for (const problem of error.errors) fail(`${file}:${problem.line}: ${sass(problem.message)}`);
+      return 1;
+    }
+    if (error instanceof TwistRuntimeError) {
+      fail(`${file}:${error.line}: ${sass(error.reason)}`);
+      return 1;
+    }
+    throw error;
+  }
+}
+
+function replCommand(args, io, fail) {
+  const parsed = parseRunOptions(args);
+  if (parsed.error || parsed.rest.length > 0) {
+    fail(parsed.error ?? "Usage: twist repl [--calm] [--seed <number>] [--max-steps <n>]");
+    return 2;
+  }
+  return runRepl({
+    readLine: io.input ?? createLineReader(),
+    write: (text) => io.out.write(text),
+    writeError: (text) => io.err.write(text),
+    options: parsed.options,
+  });
 }
 
 /**
@@ -152,8 +238,12 @@ export function run(argv, io = {}) {
       return explainCommand(args, print, fail);
     case "check":
       return checkCommand(args, print, fail);
+    case "run":
+      return runCommand(args, { out, err, input: io.input }, print, fail);
+    case "repl":
+      return replCommand(args, { out, err, input: io.input }, fail);
     default:
-      fail(`Unknown command "${command}". Try "twist --help".`);
+      fail(sass(`Unknown command "${command}". Try "twist --help"`));
       return 2;
   }
 }

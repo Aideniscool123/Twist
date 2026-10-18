@@ -17,8 +17,8 @@ ps2 @again        ; pounce back up
 ps1 "Liftoff!"
 ```
 
-> **Status:** Phases 1-6 are done. Every instruction works, including dice,
-Swap Words, Reverse Vibes and moods. The `twist run` command comes next.
+> **Status:** Phases 1-7 are done. Twist runs programs from the command line and
+has a REPL. The web playground comes next.
 
 ## Requirements
 
@@ -27,13 +27,19 @@ Swap Words, Reverse Vibes and moods. The `twist run` command comes next.
 ## Try it
 
 ```
-npm test                          # run the tests
-npm run check:examples            # check every program in examples/
-node bin/twist.js list         # list every instruction
-node bin/twist.js explain ps1  # explain one instruction
-node bin/twist.js check examples/countdown.twist
-npm run docs                      # regenerate docs/INSTRUCTIONS.md
+node bin/twist.js run examples/fizzbuzz.twist    # run a program
+node bin/twist.js run examples/moody.twist --calm  # no mood swings, same dice every time
+node bin/twist.js run examples/moody.twist --seed 7  # full chaos, but repeatable
+node bin/twist.js repl                           # type Twist one line at a time
+node bin/twist.js check examples                 # check programs for mistakes
+node bin/twist.js list                           # list every instruction
+node bin/twist.js explain ps1                    # explain one instruction
+npm test                                         # run the tests
+npm run docs                                     # regenerate docs/INSTRUCTIONS.md
 ```
+
+Twist's remarks (mood changes, refusals, complaints) go to stderr, so they
+never get mixed into what your program prints.
 
 ## Docs
 
@@ -49,7 +55,7 @@ npm run docs                      # regenerate docs/INSTRUCTIONS.md
 - [x] Phase 4: Build the core interpreter (hello world)
 - [x] Phase 5: Add control flow (labels, jumps, loops, call/return)
 - [x] Phase 6: Add strings, lists, and the weird instructions
-- [ ] Phase 7: Add error messages, tests, and the `run` CLI/REPL
+- [x] Phase 7: Add error messages, tests, and the `run` CLI/REPL
 - [ ] Phase 8: Build the web playground
 - [ ] Phase 9: Write docs and an example gallery
 - [ ] Phase 10: Build something real with Twist

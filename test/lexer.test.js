@@ -93,3 +93,11 @@ describe("tokenize", () => {
     assert.throws(() => tokenize(null), TypeError);
   });
 });
+
+describe("byte-order marks", () => {
+  it("ignores the invisible mark some editors put at the start of a file", () => {
+    const tokens = tokenize("\uFEFFps1 \"hi\"");
+    assert.equal(tokens[0].type, TokenType.CODE);
+    assert.equal(tokens[0].value, "ps1");
+  });
+});
