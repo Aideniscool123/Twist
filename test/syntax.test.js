@@ -1,7 +1,6 @@
 import { describe, it } from "node:test";
 import assert from "node:assert/strict";
 import {
-  classifyLine,
   INSTRUCTION_CODE,
   LABEL_NAME,
   OperandKind,
@@ -9,6 +8,7 @@ import {
   OPERAND_DESCRIPTIONS,
   operandFits,
 } from "../src/language/syntax.js";
+import { classifyLine } from "../src/language/parser.js";
 
 describe("blank lines and comments", () => {
   it("treats empty and whitespace-only lines as blank", () => {

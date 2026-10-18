@@ -1,10 +1,11 @@
-// A design-time checker for Twist programs.
+// The Twist checker.
 //
-// It reads a program and reports mistakes: syntax errors, unknown instructions,
-// wrong operands, and labels that are missing or defined twice. It does not run
-// anything. The real parser (Phase 3) and interpreter (Phase 4) come later.
+// It parses a program and reports every mistake it can find before anything
+// runs: syntax errors, unknown instructions, wrong operands, and labels that
+// are missing or defined twice. The interpreter only runs programs that pass.
 
-import { OPERAND_DESCRIPTIONS, OPERAND_EXAMPLES, OperandKind, classifyLine, operandFits } from "./syntax.js";
+import { OPERAND_DESCRIPTIONS, OPERAND_EXAMPLES, OperandKind, operandFits } from "./syntax.js";
+import { parse } from "./parser.js";
 import { getInstruction } from "./instructions.js";
 
 function plural(count, word) {
@@ -82,43 +83,12 @@ export function validateProgram(source) {
     throw new TypeError("validateProgram expects the program text as a string");
   }
 
-  const errors = [];
-  const instructions = [];
-  const labels = new Map();
-  const references = [];
-
-  source.split(/\r?\n/).forEach((text, offset) => {
-    const line = offset + 1;
-    const result = classifyLine(text);
-
-    switch (result.type) {
-      case "invalid":
-        errors.push({ line, message: `${result.message} (column ${result.column})` });
-        break;
-
-      case "label":
-        if (labels.has(result.name)) {
-          errors.push({
-            line,
-            message: `Label @${result.name} is already defined on line ${labels.get(result.name).line}`,
-          });
-        } else {
-          labels.set(result.name, { line, index: instructions.length });
-        }
-        break;
-
-      case "instruction":
-        instructions.push({ line, code: result.code, operands: result.operands });
-        for (const operand of result.operands) {
-          if (operand.kind === OperandKind.LABEL) references.push({ line, name: operand.value });
-        }
-        break;
-
-      default:
-        // blank lines and comments need no checking
-        break;
-    }
-  });
+  const parsed = parse(source);
+  const { instructions, labels } = parsed;
+  const errors = parsed.errors.map(({ line, column, message }) => ({
+    line,
+    message: column === undefined ? message : `${message} (column ${column})`,
+  }));
 
   const partners = swapPartners(instructions);
   for (const { line, code, operands } of instructions) {
@@ -129,12 +99,6 @@ export function validateProgram(source) {
     }
     for (const message of checkOperands(instruction, operands, partners)) {
       errors.push({ line, message });
-    }
-  }
-
-  for (const reference of references) {
-    if (!labels.has(reference.name)) {
-      errors.push({ line: reference.line, message: `Label @${reference.name} is never defined` });
     }
   }
 
