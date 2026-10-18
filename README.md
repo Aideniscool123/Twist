@@ -46,7 +46,7 @@ npm run docs                      # regenerate docs/INSTRUCTIONS.md
 
 - [x] Phase 1: Design the language rules and first instructions
 - [x] Phase 2: Finish the instruction set (make it Turing complete)
-- [ ] Phase 3: Build the lexer and parser
+- [x] Phase 3: Build the lexer and parser
 - [ ] Phase 4: Build the core interpreter (hello world)
 - [ ] Phase 5: Add control flow (labels, jumps, loops, call/return)
 - [ ] Phase 6: Add strings, lists, and the weird instructions

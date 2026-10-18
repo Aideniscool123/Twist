@@ -7,7 +7,8 @@ import {
   getInstruction,
   groupByMnemonic,
 } from "../src/language/instructions.js";
-import { INSTRUCTION_CODE, OperandKind, classifyLine, operandFits } from "../src/language/syntax.js";
+import { INSTRUCTION_CODE, OperandKind, operandFits } from "../src/language/syntax.js";
+import { classifyLine } from "../src/language/parser.js";
 import { validateProgram } from "../src/language/validate.js";
 
 const FIRST_TEN = ["ps1", "ps2", "ps3", "ad1", "ad2", "ad3", "jz1", "jz2", "hl1", "hl2"];
