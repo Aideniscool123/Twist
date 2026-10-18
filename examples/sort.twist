@@ -1,0 +1,33 @@
+; sort.twist - bubble sort a list
+mk1 #0
+ps4 #0 5
+ps4 #0 3
+ps4 #0 8
+ps4 #0 1
+ps4 #0 9
+ps4 #0 2
+ad3 #0
+ln1 #1 #0               ; #1 = how many items
+@pass:
+ps3 #5 0                ; #5 = did anything move this pass?
+ps3 #2 0                ; #2 = i
+@inner:
+ps3 #6 #2
+ad1 #6 1                ; #6 = i + 1
+je1 #6 #1 @pass_done
+gt2 #3 #0 #2            ; #3 = item i
+gt2 #4 #0 #6            ; #4 = item i + 1
+ps3 #7 #3
+gt1 #7 #4
+jz1 #7 @in_order
+st1 #0 #2 #4            ; swap them
+st1 #0 #6 #3
+ps3 #5 1
+@in_order:
+ad1 #2 1
+ps2 @inner
+@pass_done:
+jz1 #5 @sorted          ; a pass with no swaps means we're done
+ps2 @pass
+@sorted:
+ad3 #0

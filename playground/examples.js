@@ -1,13 +1,23 @@
-// The example programs the playground offers, in menu order.
-// A test checks this list against the examples/ folder.
+// The example programs, in menu order. The playground's Examples menu and the
+// gallery (docs/GALLERY.md) are both built from this list, and a test checks
+// it against the examples/ folder.
+//
+// `input` is what the gallery types in when it runs the example.
 
 export const EXAMPLES = [
-  { file: "hello.twist", title: "Hello, reef!" },
-  { file: "countdown.twist", title: "Countdown" },
-  { file: "fizzbuzz.twist", title: "FizzBuzz" },
-  { file: "echo.twist", title: "Echo (needs input)" },
-  { file: "swap.twist", title: "Juggle Zones" },
-  { file: "shopping.twist", title: "Shopping list" },
-  { file: "moody.twist", title: "Moody" },
-  { file: "backwards.twist", title: "Backwards" },
+  { file: "hello.twist", title: "Hello, reef!", description: "The classic first program." },
+  { file: "countdown.twist", title: "Countdown", description: "A loop with a label, a jump and Jump if Zero." },
+  { file: "fizzbuzz.twist", title: "FizzBuzz", description: "Count to 15, swapping some numbers for Fizz, Buzz and FizzBuzz." },
+  { file: "fibonacci.twist", title: "Fibonacci", description: "The first 10 Fibonacci numbers, sliding two cells along with Juggle Zones." },
+  { file: "primes.twist", title: "Primes", description: "Every prime up to 30, with Modulo Dance doing the dividing." },
+  { file: "factorial.twist", title: "Factorial", description: "6! with a function that calls itself (cl1 and rt1)." },
+  { file: "echo.twist", title: "Echo", description: "Ask for a number and say it back.", input: ["42"] },
+  { file: "reverse.twist", title: "Reverse", description: "Type something and Twist says it backwards, using a list as a stack.", input: ["Twist"] },
+  { file: "guess.twist", title: "Guess the number", description: "A guessing game with a secret from Roll Dice.", input: ["50", "25", "37", "31", "28", "26", "27"] },
+  { file: "swap.twist", title: "Juggle Zones", description: "Swap two cells." },
+  { file: "shopping.twist", title: "Shopping list", description: "Build a list, then shout each item using a helper you call." },
+  { file: "sort.twist", title: "Bubble sort", description: "Sort a list in place with Grab Thing and Stash Thing." },
+  { file: "dice-duel.twist", title: "Dice duel", description: "You and Twist roll three dice each. Twist is a sore loser and a worse winner." },
+  { file: "moody.twist", title: "Moody", description: "Upset Twist by dividing by zero, then apologise with Thank You." },
+  { file: "backwards.twist", title: "Backwards", description: "Swap Words, then Reverse Vibes: the program finishes by running upward." },
 ];

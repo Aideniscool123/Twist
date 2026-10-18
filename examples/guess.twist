@@ -1,0 +1,22 @@
+; guess.twist - guess Twist's secret number from 1 to 100
+rd2 #0 100              ; the secret
+ps3 #1 0                ; how many tries
+ps1 "I'm thinking of a number from 1 to 100."
+@ask:
+sy1 "Your guess: "
+ad2 #2
+ad1 #1 1
+je1 #2 #0 @win
+ps3 #3 #2
+gt1 #3 #0
+jz1 #3 @low
+ps1 "Too high!"
+ps2 @ask
+@low:
+ps1 "Too low!"
+ps2 @ask
+@win:
+ps3 #4 "Got it in "
+jn2 #4 #1
+jn2 #4 " tries!"
+ad3 #4

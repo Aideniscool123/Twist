@@ -531,7 +531,8 @@ async function loadExample(file) {
     const response = await fetch(`../examples/${file}`);
     if (!response.ok) throw new Error(response.statusText);
     loadSource(await response.text());
-    if (file === "echo.twist" && els.input.value.trim() === "") els.input.value = "42\n";
+    const example = EXAMPLES.find((item) => item.file === file);
+    els.input.value = example?.input ? `${example.input.join("\n")}\n` : "";
     toast(`Loaded ${file}`);
   } catch {
     toast(`Couldn't load ${file}`);

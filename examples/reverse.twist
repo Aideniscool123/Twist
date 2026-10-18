@@ -1,0 +1,13 @@
+; reverse.twist - type something and Twist says it backwards
+ps1 "Type something:"
+rd3 #0
+sp1 #0 ""               ; a list of letters
+ps3 #1 ""
+@loop:
+jz1 #0 @done            ; an empty list counts as zero
+pp1 #0 #2               ; take the last letter off...
+jn2 #1 #2               ; ...and put it on the end of #1
+ps2 @loop
+@done:
+ps1 "Backwards:"
+ad3 #1

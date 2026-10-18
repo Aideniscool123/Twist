@@ -1,0 +1,36 @@
+; dice-duel.twist - you and Twist each roll three dice. Highest total wins.
+ps3 #0 0                ; your total
+ps3 #1 0                ; Twist's total
+ps3 #9 3                ; rolls left
+@roll:
+jz1 #9 @score
+rd2 #2 6
+ad1 #0 #2
+rd2 #2 6
+ad1 #1 #2
+ad1 #9 -1
+ps2 @roll
+@score:
+ps3 #3 "You rolled "
+jn2 #3 #0
+ad3 #3
+ps3 #3 "Twist rolled "
+jn2 #3 #1
+ad3 #3
+je1 #0 #1 @tie
+ps3 #4 #0
+gt1 #4 #1
+jz1 #4 @twist_wins
+ps1 "You win! Twist takes it badly."
+dv1 #5 0                ; a tantrum: dividing by zero on purpose
+mo1
+hl1
+@twist_wins:
+ps1 "Twist wins, and won't stop talking about it."
+ty1
+ty1
+ty1
+mo1
+hl1
+@tie:
+ps1 "A tie. Twist demands a rematch."

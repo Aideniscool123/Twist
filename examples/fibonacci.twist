@@ -1,0 +1,14 @@
+; fibonacci.twist - the first 10 Fibonacci numbers
+ps3 #0 0                ; the current number
+ps3 #1 1                ; the next one
+ps3 #3 10               ; how many are left to print
+@loop:
+jz1 #3 @done
+ad3 #0
+ps3 #2 #0               ; #2 = current + next
+ad1 #2 #1
+jz2 #0 #1               ; slide along: current = next...
+jz2 #1 #2               ; ...and next = the sum
+ad1 #3 -1
+ps2 @loop
+@done:

@@ -17,8 +17,9 @@ ps2 @again        ; pounce back up
 ps1 "Liftoff!"
 ```
 
-> **Status:** Phases 1-8 are done: the language, the command line, a REPL and a
-web playground.
+> **Status:** Phases 1-9 are done: the language, the command line, a REPL, a
+web playground, a tutorial and an example gallery. Phase 10 (building
+something real with Twist) is up to you.
 
 ## Requirements
 
@@ -48,7 +49,7 @@ node bin/twist.js check examples                 # check programs for mistakes
 node bin/twist.js list                           # list every instruction
 node bin/twist.js explain ps1                    # explain one instruction
 npm test                                         # run the tests
-npm run docs                                     # regenerate docs/INSTRUCTIONS.md
+npm run docs                                     # regenerate the reference and gallery
 ```
 
 Twist's remarks (mood changes, refusals, complaints) go to stderr, so they
@@ -56,9 +57,12 @@ never get mixed into what your program prints.
 
 ## Docs
 
-- [Design](docs/DESIGN.md): the chaos rule, memory, and why it can compute anything
+- [Tutorial](docs/TUTORIAL.md): learn Twist in 15 minutes
+- [Example gallery](docs/GALLERY.md): every example with its real output (generated)
+- [Instruction reference](docs/INSTRUCTIONS.md): all 42 instructions (generated)
+- [Design](docs/DESIGN.md): the chaos rule, values, mood, Reverse Vibes and Swap Words
 - [Syntax](docs/SYNTAX.md): what a line of Twist looks like
-- [Instruction reference](docs/INSTRUCTIONS.md): every instruction (generated)
+- [Architecture](docs/ARCHITECTURE.md): how the code fits together, and how to add an instruction
 
 ## Roadmap
 
@@ -70,5 +74,5 @@ never get mixed into what your program prints.
 - [x] Phase 6: Add strings, lists, and the weird instructions
 - [x] Phase 7: Add error messages, tests, and the `run` CLI/REPL
 - [x] Phase 8: Build the web playground
-- [ ] Phase 9: Write docs and an example gallery
+- [x] Phase 9: Write docs and an example gallery
 - [ ] Phase 10: Build something real with Twist
