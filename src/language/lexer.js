@@ -143,7 +143,8 @@ export function tokenize(source) {
   }
 
   const tokens = [];
-  const lines = source.split(/\r?\n/);
+  // Some editors (Notepad, for one) start a file with an invisible byte-order mark.
+  const lines = source.replace(/^﻿/, "").split(/\r?\n/);
   lines.forEach((text, offset) => {
     const line = offset + 1;
     tokens.push(...tokenizeLine(text, line));
