@@ -1,0 +1,24 @@
+; shopping.twist - build a list, then read it back with a little helper
+mk1 #0                  ; #0 is the shopping list
+ps4 #0 "eggs"
+ps4 #0 "milk"
+ps4 #0 "glitter"
+ln1 #1 #0               ; #1 = how many things to buy
+ps3 #2 0                ; #2 = which item we're on
+@each:
+je1 #2 #1 @done
+gt2 #3 #0 #2            ; #3 = item number #2
+cl1 @shout_item
+ad1 #2 1
+ps2 @each
+@done:
+ps1 "That's everything."
+hl1
+
+; shout_item: print the item in #3 in capitals, with a dash in front
+@shout_item:
+ps3 #4 "- "
+up1 #3
+jn2 #4 #3
+ad3 #4
+rt1

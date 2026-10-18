@@ -1,0 +1,31 @@
+; fizzbuzz.twist - count to 15, but say Fizz, Buzz or FizzBuzz instead
+; of numbers that divide by 3, 5 or both
+ps3 #0 1                ; the counter
+@loop:
+ps3 #1 #0               ; gt1 overwrites its cell, so test a copy
+gt1 #1 15               ; #1 = 1 once we're past 15
+jz1 #1 @keep_going
+hl1
+@keep_going:
+ps3 #2 #0
+md1 #2 15
+jz1 #2 @fizzbuzz
+ps3 #2 #0
+md1 #2 3
+jz1 #2 @fizz
+ps3 #2 #0
+md1 #2 5
+jz1 #2 @buzz
+ad3 #0
+ps2 @next
+@fizzbuzz:
+ps1 "FizzBuzz"
+ps2 @next
+@fizz:
+ps1 "Fizz"
+ps2 @next
+@buzz:
+ps1 "Buzz"
+@next:
+ad1 #0 1
+ps2 @loop

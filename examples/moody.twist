@@ -1,0 +1,9 @@
+; moody.twist - upset Twist, then apologise
+mo1                     ; chill
+ps3 #0 10
+dv1 #0 0                ; dividing by zero: #0 becomes 0, and Twist is not happy
+mo1                     ; FURIOUS, and it's shouting now
+ps1 "sorry about that"
+ty1                     ; Thank You: a little better
+ty1                     ; and a little more
+mo1                     ; chill again

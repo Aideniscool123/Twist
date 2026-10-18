@@ -7,29 +7,49 @@
 /** Everything after this character (outside a string) is a comment. */
 export const COMMENT_MARKER = ";";
 
-/** The four kinds of operand an instruction can take. */
+/**
+ * The kinds of operand an instruction can take.
+ *
+ * CELL, NUMBER, STRING, LABEL and CODE are what an operand looks like on the
+ * page. VALUE is only used in the instruction table: it means "a cell, a
+ * number or a string", so a line never contains a VALUE operand itself.
+ */
 export const OperandKind = Object.freeze({
   CELL: "cell",
-  INT: "int",
+  NUMBER: "number",
   STRING: "string",
   LABEL: "label",
+  CODE: "code",
+  VALUE: "value",
 });
 
 /** One example of each operand kind, used in error messages and docs. */
 export const OPERAND_EXAMPLES = Object.freeze({
   [OperandKind.CELL]: "#0",
-  [OperandKind.INT]: "-5",
+  [OperandKind.NUMBER]: "-2.5",
   [OperandKind.STRING]: '"hi"',
   [OperandKind.LABEL]: "@loop",
+  [OperandKind.CODE]: "ps1",
+  [OperandKind.VALUE]: '#0, 7 or "hi"',
 });
 
 /** A friendly name for each operand kind, used in error messages. */
 export const OPERAND_DESCRIPTIONS = Object.freeze({
   [OperandKind.CELL]: "a cell",
-  [OperandKind.INT]: "a whole number",
+  [OperandKind.NUMBER]: "a number",
   [OperandKind.STRING]: "a string in quotes",
   [OperandKind.LABEL]: "a label",
+  [OperandKind.CODE]: "an instruction code",
+  [OperandKind.VALUE]: "a cell, a number or a string",
 });
+
+/** Does an operand of kind `actual` fit a slot in the instruction table that wants `wanted`? */
+export function operandFits(wanted, actual) {
+  if (wanted === OperandKind.VALUE) {
+    return actual === OperandKind.CELL || actual === OperandKind.NUMBER || actual === OperandKind.STRING;
+  }
+  return wanted === actual;
+}
 
 /** An instruction code: two lowercase letters, then a number with no leading zeros (ps1, ad12). */
 export const INSTRUCTION_CODE = /^[a-z]{2}[1-9][0-9]*$/;
@@ -38,7 +58,7 @@ export const INSTRUCTION_CODE = /^[a-z]{2}[1-9][0-9]*$/;
 export const LABEL_NAME = /^[a-z_][a-z0-9_]*$/;
 
 const CELL_PATTERN = /^#(0|[1-9][0-9]*)$/;
-const INT_PATTERN = /^(0|-?[1-9][0-9]*)$/;
+const NUMBER_PATTERN = /^-?(0|[1-9][0-9]*)(\.[0-9]+)?$/;
 const LABEL_REFERENCE = /^@([a-z_][a-z0-9_]*)$/;
 const LABEL_DEFINITION = /^@([a-z_][a-z0-9_]*):$/;
 
@@ -125,12 +145,25 @@ function scanLine(line) {
   return { tokens, hasComment };
 }
 
-function numberOperand(kind, text, value) {
-  if (!Number.isSafeInteger(value)) {
-    return { error: `The number in ${text} is too big` };
+function cellOperand(text, index) {
+  if (!Number.isSafeInteger(index)) {
+    return { error: `The cell number in ${text} is too big` };
   }
-  return { operand: { kind, text, value } };
+  return { operand: { kind: OperandKind.CELL, text, value: index } };
 }
+
+function numberOperand(text) {
+  const value = Number(text);
+  if (Math.abs(value) > Number.MAX_SAFE_INTEGER) {
+    return { error: `The number ${text} is too big` };
+  }
+  if (Object.is(value, -0)) {
+    return { error: `${text} is just 0 wearing a minus sign. Write 0` };
+  }
+  return { operand: { kind: OperandKind.NUMBER, text, value } };
+}
+
+const WRITTEN_KINDS = [OperandKind.CELL, OperandKind.NUMBER, OperandKind.STRING, OperandKind.LABEL, OperandKind.CODE];
 
 function parseOperand(token) {
   if (token.isString) {
@@ -140,14 +173,16 @@ function parseOperand(token) {
   const { text } = token;
 
   const cell = CELL_PATTERN.exec(text);
-  if (cell) return numberOperand(OperandKind.CELL, text, Number(cell[1]));
+  if (cell) return cellOperand(text, Number(cell[1]));
 
-  if (INT_PATTERN.test(text)) return numberOperand(OperandKind.INT, text, Number(text));
+  if (NUMBER_PATTERN.test(text)) return numberOperand(text);
 
   const label = LABEL_REFERENCE.exec(text);
   if (label) return { operand: { kind: OperandKind.LABEL, text, value: label[1] } };
 
-  const examples = Object.values(OPERAND_EXAMPLES);
+  if (INSTRUCTION_CODE.test(text)) return { operand: { kind: OperandKind.CODE, text, value: text } };
+
+  const examples = WRITTEN_KINDS.map((kind) => OPERAND_EXAMPLES[kind]);
   const list = `${examples.slice(0, -1).join(", ")} or ${examples[examples.length - 1]}`;
   return { error: `Can't read ${text} as an operand. Operands look like ${list}` };
 }
