@@ -3,7 +3,8 @@
 // Every token knows its line and column (both start at 1). Lines are separated
 // by NEWLINE tokens and the list always ends with EOF, so the parser never has
 // to look at raw text. A mistake inside a line becomes an ERROR token, and the
-// rest of that line is skipped.
+// rest of that line is skipped. An ERROR's `column` is where the problem is,
+// and its `start` is where the token it spoiled began.
 
 import { COMMENT_MARKER, INSTRUCTION_CODE } from "./syntax.js";
 
@@ -113,7 +114,7 @@ export function tokenizeLine(text, line = 1) {
     if (ch === '"') {
       const read = readString(text, i);
       if (read.error) {
-        tokens.push({ type: TokenType.ERROR, text: text.slice(i), message: read.error, line, column: read.errorColumn });
+        tokens.push({ type: TokenType.ERROR, text: text.slice(i), message: read.error, line, column: read.errorColumn, start: column });
         break;
       }
       tokens.push({ ...read.token, line, column });
@@ -126,7 +127,7 @@ export function tokenizeLine(text, line = 1) {
     const word = text.slice(i, j);
     const { type, value, message } = wordToken(word);
     if (type === TokenType.ERROR) {
-      tokens.push({ type, text: word, message, line, column });
+      tokens.push({ type, text: word, message, line, column, start: column });
       break;
     }
     tokens.push({ type, text: word, value, line, column });
