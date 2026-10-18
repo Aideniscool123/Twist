@@ -6,7 +6,7 @@
 // job) and throw Oops with a message when something is wrong.
 
 import { Oops } from "./errors.js";
-import { copyValue, formatValue, valuesEqual } from "./values.js";
+import { copyValue, formatValue, isEmpty, valuesEqual } from "./values.js";
 
 const NUMBER_INPUT = /^[+-]?(\d+(\.\d*)?|\.\d+)$/;
 
@@ -99,6 +99,28 @@ export const BEHAVIORS = {
   },
 
   // control
+  ps2(m, [target]) {
+    m.jump(target);
+  },
+  jz1(m, [cell, target]) {
+    m.labelOf(target);
+    if (isEmpty(m.read(m.cellOf(cell)))) m.jump(target);
+  },
+  jn1(m, [cell, target]) {
+    m.labelOf(target);
+    const value = m.read(m.cellOf(cell));
+    if (typeof value === "number" && value < 0) m.jump(target);
+  },
+  je1(m, [cell, other, target]) {
+    m.labelOf(target);
+    if (valuesEqual(m.read(m.cellOf(cell)), m.valueOf(other))) m.jump(target);
+  },
+  cl1(m, [target]) {
+    m.call(target);
+  },
+  rt1(m) {
+    m.returnFromCall();
+  },
   hl1(m) {
     m.stop();
   },
