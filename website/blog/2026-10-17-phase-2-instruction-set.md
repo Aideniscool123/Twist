@@ -2,7 +2,7 @@
 slug: phase-2-instruction-set
 title: "Phase 2: 10 instructions become 42"
 date: 2026-10-17T23:18:00
-authors: [aiden, claude]
+authors: [aiden]
 tags: [devlog, design, chaos]
 ---
 

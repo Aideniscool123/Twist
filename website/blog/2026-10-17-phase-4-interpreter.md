@@ -2,7 +2,7 @@
 slug: phase-4-interpreter
 title: "Phase 4: Hello, reef!"
 date: 2026-10-17T23:23:00
-authors: [aiden, claude]
+authors: [aiden]
 tags: [devlog, interpreter]
 ---
 

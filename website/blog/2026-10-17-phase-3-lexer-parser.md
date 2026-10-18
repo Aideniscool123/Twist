@@ -2,7 +2,7 @@
 slug: phase-3-lexer-parser
 title: "Phase 3: A real lexer and parser"
 date: 2026-10-17T23:20:00
-authors: [aiden, claude]
+authors: [aiden]
 tags: [devlog, interpreter]
 ---
 
