@@ -17,8 +17,8 @@ ps2 @again        ; pounce back up
 ps1 "Liftoff!"
 ```
 
-> **Status:** Phases 1-5 are done. The interpreter runs loops, calls and
-FizzBuzz. Lists, text and the chaos come next.
+> **Status:** Phases 1-6 are done. Every instruction works, including dice,
+Swap Words, Reverse Vibes and moods. The `twist run` command comes next.
 
 ## Requirements
 
@@ -48,7 +48,7 @@ npm run docs                      # regenerate docs/INSTRUCTIONS.md
 - [x] Phase 3: Build the lexer and parser
 - [x] Phase 4: Build the core interpreter (hello world)
 - [x] Phase 5: Add control flow (labels, jumps, loops, call/return)
-- [ ] Phase 6: Add strings, lists, and the weird instructions
+- [x] Phase 6: Add strings, lists, and the weird instructions
 - [ ] Phase 7: Add error messages, tests, and the `run` CLI/REPL
 - [ ] Phase 8: Build the web playground
 - [ ] Phase 9: Write docs and an example gallery

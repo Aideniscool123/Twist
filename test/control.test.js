@@ -4,7 +4,7 @@ import { readFileSync } from "node:fs";
 import { MAX_CALL_DEPTH, Machine, TwistRuntimeError, loadProgram, runProgram } from "../src/runtime/index.js";
 
 const example = (name) => readFileSync(new URL(`../examples/${name}`, import.meta.url), "utf8");
-const out = (source, options) => runProgram(source, options).output;
+const out = (source, options) => runProgram(source, { calm: true, ...options }).output;
 
 describe("jumps", () => {
   it("runs the countdown loop", () => {
@@ -49,7 +49,7 @@ describe("jumps", () => {
   });
 
   it("counts jumps", () => {
-    const { machine } = runProgram("ps3 #0 3\n@loop:\njz1 #0 @done\nad1 #0 -1\nps2 @loop\n@done:");
+    const { machine } = runProgram("ps3 #0 3\n@loop:\njz1 #0 @done\nad1 #0 -1\nps2 @loop\n@done:", { calm: true });
     assert.equal(machine.jumps, 4);
   });
 });
@@ -89,7 +89,7 @@ describe("call and return", () => {
   });
 
   it("shows the call stack while stepping", () => {
-    const machine = new Machine(loadProgram("cl1 @f\nhl1\n@f:\nhl2\nrt1"));
+    const machine = new Machine(loadProgram("cl1 @f\nhl1\n@f:\nhl2\nrt1"), { calm: true });
     machine.step();
     assert.equal(machine.callStack.length, 1);
     assert.equal(machine.current.code, "hl2");
