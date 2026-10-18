@@ -1,0 +1,14 @@
+{
+  "name": "Twist",
+  "version": "0.1.0",
+  "description": "Twist is a chaotic programming where some as little as a single digit will change the whole meaning.",
+  "private": true,
+  "type": "module",
+  "main": "src/index.js",
+  "scripts": {
+    "test": "node --test"
+  },
+  "engines": {
+    "node": ">=18"
+  }
+}
