@@ -1,6 +1,3 @@
-# Builds the docs site (website/) and publishes it to GitHub Pages whenever
-# main changes. Needs Settings -> Pages -> Source set to "GitHub Actions".
-
 name: Deploy docs
 
 on:

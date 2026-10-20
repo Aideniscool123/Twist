@@ -1,13 +1,9 @@
-// Read lines from standard input without waiting on promises, so a running
-// Twist program can ask for input in the middle of an instruction.
-
 import { readSync } from "node:fs";
 
 function sleep(ms) {
   Atomics.wait(new Int32Array(new SharedArrayBuffer(4)), 0, 0, ms);
 }
 
-/** Returns a function that reads the next line from `fd`, or null at the end of input. */
 export function createLineReader(fd = 0) {
   const buffer = Buffer.alloc(4096);
   let pending = "";
@@ -39,7 +35,6 @@ export function createLineReader(fd = 0) {
   return () => {
     while (!pending.includes("\n") && !ended) fill();
     if (first) {
-      // PowerShell starts piped text with an invisible byte-order mark
       pending = pending.replace(/^﻿/, "");
       first = false;
     }

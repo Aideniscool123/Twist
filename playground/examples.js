@@ -1,10 +1,3 @@
-// The example programs, in menu order. The playground's Examples menu and the
-// website's example pages are both built from this list, and a test checks it
-// against the examples/ folder.
-//
-// `input` is what gets typed in when the example runs: the playground fills
-// its input box with it, and the website shows the output it produces.
-
 export const EXAMPLES = [
   { file: "hello.twist", title: "Hello, reef!", description: "The classic first program." },
   { file: "countdown.twist", title: "Countdown", description: "A loop with a label, a jump and Jump if Zero." },

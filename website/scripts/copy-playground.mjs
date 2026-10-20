@@ -1,7 +1,3 @@
-// Copies the playground, plus the Twist source it imports and the example
-// programs, into static/play/ so the site serves it at /Twist/play/playground/.
-// Runs automatically before `npm start` and `npm run build`.
-
 import { cpSync, rmSync } from "node:fs";
 
 const from = (path) => new URL(`../../${path}`, import.meta.url);

@@ -1,8 +1,3 @@
-// Every ```twist block on the website must pass the checker (unless it's a
-// deliberate mistake), and every ```text block straight after one must be
-// exactly what that program prints with --calm. Generated pages are covered
-// by the generator itself, so only hand-written pages are checked here.
-
 import { describe, it } from "node:test";
 import assert from "node:assert/strict";
 import { existsSync, readFileSync, readdirSync } from "node:fs";
@@ -25,7 +20,6 @@ function markdownFiles(dir) {
   });
 }
 
-// A twist block, optionally "Typed in: `a`, `b`", optionally a text block right after.
 function snippets(markdown) {
   const pattern = /```twist\n([\s\S]*?)```\n(?:\nTyped in: (.*)\n)?(?:\n```text\n([\s\S]*?)```)?/g;
   return [...markdown.matchAll(pattern)].map(([, source, typed, output]) => ({
@@ -35,7 +29,6 @@ function snippets(markdown) {
   }));
 }
 
-// What the playground would show: the output, then the error (if any), sassed.
 function show(source, input) {
   try {
     return runProgram(source, { calm: true, input, maxSteps: 10_000 }).output;

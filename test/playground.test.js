@@ -52,7 +52,6 @@ describe("playground examples", () => {
 });
 
 describe("playground code", () => {
-  // Follow every relative import from app.js and make sure none of it needs Node.
   it("only loads code that can run in a browser", () => {
     const seen = new Set();
     const visit = (file) => {

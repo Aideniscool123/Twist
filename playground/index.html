@@ -3,9 +3,6 @@
   <head>
     <meta charset="utf-8" />
     <script>
-      // Some servers drop the trailing slash (/play/playground instead of
-      // /play/playground/), which would make every relative link below point
-      // one folder too high. Put it back, before anything else loads.
       if (!location.pathname.endsWith("/") && !location.pathname.endsWith(".html")) {
         document.write('<base href="' + location.pathname + '/">');
       }
@@ -22,7 +19,6 @@
     />
     <link rel="stylesheet" href="style.css" />
     <script>
-      // pick the theme before anything draws, so there's no flash
       try {
         const saved = localStorage.getItem("twist-theme");
         if (saved) document.documentElement.dataset.theme = saved;

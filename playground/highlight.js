@@ -1,6 +1,3 @@
-// Syntax highlighting for the playground editor, built on the real lexer, so
-// the colours always agree with what Twist actually reads.
-
 import { TokenType, tokenizeLine } from "../src/language/lexer.js";
 import { getInstruction } from "../src/language/instructions.js";
 
@@ -26,7 +23,6 @@ function classFor(token, isFirst) {
   }
 }
 
-/** Turn one line of Twist into HTML with a <span> around every token. Spacing is kept exactly. */
 export function highlightLine(text) {
   const tokens = tokenizeLine(text);
   let html = "";
@@ -46,7 +42,6 @@ export function highlightLine(text) {
   return html + escapeHtml(text.slice(at));
 }
 
-/** Highlight a whole program. Every line becomes its own <div>, so lines can be marked. */
 export function highlightProgram(source) {
   return source
     .split("\n")

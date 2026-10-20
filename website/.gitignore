@@ -1,14 +1,10 @@
-# Dependencies
 /node_modules
 
-# Production
 /build
 
-# Generated files
 .docusaurus
 .cache-loader
 
-# Misc
 .DS_Store
 .env.local
 .env.development.local
@@ -19,7 +15,6 @@ npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
 
-# Built from Twist's source by scripts/generate.mjs and scripts/copy-playground.mjs
 /docs/reference/instructions/
 /docs/reference/categories/
 /docs/examples/

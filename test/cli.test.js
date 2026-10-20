@@ -262,7 +262,6 @@ describe("repl", () => {
   });
 
   it("jumps back to labels typed earlier", () => {
-    // typing the jn1 loops back to @top until #0 reaches 3
     const result = repl(["ps3 #0 0", "@top:", "ad1 #0 1", "ps3 #1 #0", "sb1 #1 3", "jn1 #1 @top", "ad3 #0"]);
     assert.match(result.out, /twist> 3\n/);
   });
