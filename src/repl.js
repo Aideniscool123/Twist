@@ -1,9 +1,3 @@
-// The Twist REPL: type a line, it runs.
-//
-// Every line you type is added to a growing program. A new instruction runs
-// straight away; a label just marks the spot, so later lines can jump back to
-// it. Jumps really do jump, so `ps2 @top` replays everything after @top.
-
 import { Machine } from "./runtime/machine.js";
 import { TwistRuntimeError } from "./runtime/errors.js";
 import { formatValue } from "./runtime/values.js";
@@ -21,14 +15,6 @@ const HELP = `Type a line of Twist and it runs. Labels (like @top:) mark a spot 
 
 const EMPTY_PROGRAM = { instructions: [], labels: new Map() };
 
-/**
- * Run the REPL until the input ends or the user quits.
- *
- * readLine     () => string | null    reads the next line typed (also used by ad2 and rd3)
- * write        (text) => void          normal output
- * writeError   (text) => void          errors and Twist's remarks
- * options      calm, seed, maxSteps    passed on to the machine
- */
 export function runRepl({ readLine, write, writeError, options = {} }) {
   let lines = [];
   let machine;
@@ -91,7 +77,7 @@ export function runRepl({ readLine, write, writeError, options = {} }) {
     const before = machine.program.instructions.length;
     lines = candidate;
     machine.program = { instructions: result.instructions, labels: result.labels };
-    if (result.instructions.length === before) continue; // a comment or a label: nothing to run
+    if (result.instructions.length === before) continue;
 
     machine.pc = before;
     machine.halted = false;

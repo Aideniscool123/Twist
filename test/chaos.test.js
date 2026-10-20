@@ -6,7 +6,6 @@ import { JUMPS_PER_DIZZY_SPELL, Machine, loadProgram, moodify, runProgram, seede
 const example = (name) => readFileSync(new URL(`../examples/${name}`, import.meta.url), "utf8");
 const calm = (source, options) => runProgram(source, { calm: true, ...options });
 
-// A random source that hands out these numbers in order, then repeats the last one.
 function scripted(...numbers) {
   let i = 0;
   return () => numbers[Math.min(i++, numbers.length - 1)];
@@ -71,7 +70,6 @@ describe("Swap Words", () => {
   });
 
   it("follows chains of swaps", () => {
-    // after these, ps1 does ps2's job (jump)
     const source = 'sw1 ps1 ad3\nsw1 ps1 ps2\nps1 @end\nps1 "skipped"\n@end:';
     const { machine, output } = calm(source);
     assert.equal(output, "");
@@ -182,7 +180,6 @@ describe("mood", () => {
   });
 
   it("refuses instructions when furious, but never ty1", () => {
-    // first random() is the mood-swing check, the second is the refusal roll
     const program = loadProgram('ps1 "a"\nty1');
     const machine = new Machine(program, { random: scripted(0.99, 0.0, 0.99, 0.0) });
     const notes = [];

@@ -1,10 +1,3 @@
-// Builds the generated docs pages from Twist's own source, so they can never
-// go out of date:
-//   docs/reference/instructions/*  one page per instruction
-//   docs/reference/categories/*    one page per category
-//   docs/examples/*                one page per example, with its real output
-// Runs automatically before `npm start` and `npm run build`.
-
 import { mkdirSync, readFileSync, readdirSync, rmSync, writeFileSync } from "node:fs";
 import { Category, INSTRUCTIONS, groupByMnemonic } from "../../src/language/instructions.js";
 import { OPERAND_DESCRIPTIONS, OPERAND_EXAMPLES } from "../../src/language/syntax.js";
@@ -13,19 +6,14 @@ import { EXAMPLES } from "../../playground/examples.js";
 
 const out = (path) => new URL(`../docs/${path}`, import.meta.url);
 const write = (path, text) => writeFileSync(out(path), text);
-// Empty a folder (without deleting the folder itself: on Windows that fails
-// if an editor or terminal has it open) and give it its _category_.json.
 const fresh = (dir, category) => {
   mkdirSync(out(dir), { recursive: true });
   for (const name of readdirSync(out(dir))) rmSync(out(`${dir}/${name}`), { recursive: true, force: true });
-  // the examples folder's category is defined in sidebars.js instead
   if (category) write(`${dir}/_category_.json`, `${JSON.stringify(category, null, 2)}\n`);
 };
 const fence = (lang, text) => `\`\`\`${lang}\n${text.replace(/\n$/, "")}\n\`\`\``;
 const title = (word) => word[0].toUpperCase() + word.slice(1);
-// Quote a value for YAML front matter.
 const yaml = (text) => JSON.stringify(text);
-// Markdown tables and MDX both dislike some characters inside table cells.
 const cell = (text) => text.replace(/\|/g, "\\|").replace(/</g, "&lt;").replace(/{/g, "&#123;");
 
 const CATEGORY_BLURBS = {
@@ -40,7 +28,6 @@ const CATEGORY_BLURBS = {
   misc: "Everything else. (There is exactly one, and it does nothing.)",
 };
 
-// Complete demo programs for instructions whose example can't show much alone.
 const DEMOS = {
   ps2: 'ps2 @skip\nps1 "this never prints"\n@skip:\nps1 "jumped over it"',
   jz1: "ps3 #0 3\n@again:\njz1 #0 @done\nad3 #0\nad1 #0 -1\nps2 @again\n@done:\nps1 \"Liftoff!\"",
@@ -57,7 +44,6 @@ const DEMOS = {
   sy1: 'sy1 "Loading"\nsy1 "..."\nsy1 " done"',
 };
 
-// Run an instruction's example in a tiny program so the page can show what it does.
 function demo(instruction) {
   const input = { ad2: ["21"], rd3: ["hi there"], je1: ["quit"] }[instruction.code] ?? [];
   if (DEMOS[instruction.code]) return tryRun(DEMOS[instruction.code], input);
@@ -112,8 +98,6 @@ function tryRun(source, input) {
     throw new Error(`A demo program failed:\n${source}\n${error.message}`);
   }
 }
-
-// ---- one page per instruction ------------------------------------------------
 
 fresh("reference/instructions", { label: "All instructions", position: 3 });
 INSTRUCTIONS.forEach((instruction, index) => {
@@ -177,8 +161,6 @@ INSTRUCTIONS.forEach((instruction, index) => {
   write(`reference/instructions/${instruction.code}.md`, `${parts.join("\n")}\n`);
 });
 
-// ---- one page per category -----------------------------------------------------
-
 fresh("reference/categories", { label: "Categories", position: 2 });
 Object.values(Category).forEach((category, index) => {
   const list = INSTRUCTIONS.filter((instruction) => instruction.category === category);
@@ -203,8 +185,6 @@ Object.values(Category).forEach((category, index) => {
     ].join("\n"),
   );
 });
-
-// ---- one page per example ------------------------------------------------------
 
 fresh("examples");
 EXAMPLES.forEach(({ file, title: name, description, input }, index) => {
@@ -232,7 +212,6 @@ EXAMPLES.forEach(({ file, title: name, description, input }, index) => {
     "",
     fence("bash", `node bin/twist.js run examples/${file}`),
     "",
-    // the same #code= link the playground's Share button makes
     `Or [open it in the playground](pathname:///play/playground/#code=${Buffer.from(source).toString("base64url")}).`,
     "",
   );

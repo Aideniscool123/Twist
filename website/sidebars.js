@@ -1,10 +1,3 @@
-// @ts-check
-
-// Three sidebars, one for each navbar tab. Each section is a category with
-// its own landing page (a "generated index" that lists its pages); the pages
-// inside come from the folder, ordered by their sidebar_position.
-
-/** A sidebar section for a docs folder, with a landing page at /docs/<slug>. */
 function section(label, dir, description, extra = {}) {
   return {
     type: 'category',
@@ -15,7 +8,6 @@ function section(label, dir, description, extra = {}) {
   };
 }
 
-/** @type {import('@docusaurus/plugin-content-docs').SidebarsConfig} */
 const sidebars = {
   learn: [
     'intro',

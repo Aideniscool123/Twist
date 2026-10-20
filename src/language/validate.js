@@ -1,9 +1,3 @@
-// The Twist checker.
-//
-// It parses a program and reports every mistake it can find before anything
-// runs: syntax errors, unknown instructions, wrong operands, and labels that
-// are missing or defined twice. The interpreter only runs programs that pass.
-
 import { OPERAND_DESCRIPTIONS, OPERAND_EXAMPLES, OperandKind, operandFits } from "./syntax.js";
 import { parse } from "./parser.js";
 import { getInstruction } from "./instructions.js";
@@ -16,9 +10,6 @@ function fitsSpecs(specs, operands) {
   return specs.length === operands.length && specs.every((spec, index) => operandFits(spec.kind, operands[index].kind));
 }
 
-// sw1 can swap what two instructions do, so a line like `ps1 #0` is fine in a
-// program that swaps ps1 with ad3. Work out, for each code, every instruction
-// whose job it might be doing: everything connected to it by an sw1 line.
 function swapPartners(lines) {
   const partners = new Map();
   const groupOf = (code) => {
@@ -68,16 +59,6 @@ function checkOperands(instruction, operands, partners) {
   return problems;
 }
 
-/**
- * Check a whole program.
- *
- * Returns:
- *   ok            true if there are no errors
- *   errors        [{ line, message }] sorted by line number (lines start at 1)
- *   instructions  every instruction line in order: [{ line, code, operands }]
- *   labels        Map of label name => { line, index }, where index is the
- *                 position in `instructions` that the label points at
- */
 export function validateProgram(source) {
   if (typeof source !== "string") {
     throw new TypeError("validateProgram expects the program text as a string");

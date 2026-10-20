@@ -1,9 +1,3 @@
-// Twist's attitude.
-//
-// Error messages inside Twist are plain and precise. `sass` adds a rude remark
-// on the end, for showing to people. The useful part (line number, what went
-// wrong) always comes first, so the rudeness never hides the fix.
-
 const SPECIFIC = [
   [/doing \S+'s job/, "That's what you get for using sw1."],
   [/^Unknown instruction/, "Did you just make that up?"],
@@ -43,14 +37,12 @@ const GENERIC = [
   "Even ps2 couldn't jump over this one.",
 ];
 
-// A tiny hash so the same message always gets the same remark.
 function pick(list, text) {
   let hash = 0;
   for (const ch of text) hash = (hash * 31 + ch.codePointAt(0)) >>> 0;
   return list[hash % list.length];
 }
 
-/** Add a remark to a plain error message: "Unknown instruction zz9. Did you just make that up?" */
 export function sass(message) {
   const remark = SPECIFIC.find(([pattern]) => pattern.test(message))?.[1] ?? pick(GENERIC, message);
   const ending = /[.!?]$/.test(message) ? "" : ".";

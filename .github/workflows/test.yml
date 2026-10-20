@@ -1,6 +1,3 @@
-# Runs Twist's tests and checks the docs site still builds, on every pull
-# request. Nothing is published.
-
 name: Test
 
 on:

@@ -1,5 +1,3 @@
-// Everything needed to run Twist programs.
-
 export * from "./values.js";
 export * from "./errors.js";
 export { BEHAVIORS } from "./behaviors.js";

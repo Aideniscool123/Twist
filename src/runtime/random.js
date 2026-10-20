@@ -1,9 +1,5 @@
-// Seeded randomness, so `--seed 42` gives the same dice rolls every time.
-
-/** The seed --calm uses when no --seed is given. */
 export const CALM_SEED = 0;
 
-/** A small, fast seeded random number generator (mulberry32). Returns () => number in [0, 1). */
 export function seededRandom(seed) {
   let state = seed >>> 0;
   return () => {
@@ -15,7 +11,6 @@ export function seededRandom(seed) {
   };
 }
 
-/** A fresh seed for runs that didn't ask for one. */
 export function randomSeed() {
   return Math.floor(Math.random() * 2 ** 32);
 }

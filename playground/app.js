@@ -1,5 +1,3 @@
-// The Twist playground. Everything here runs the real interpreter from src/.
-
 import { Machine } from "../src/runtime/machine.js";
 import { TwistRuntimeError } from "../src/runtime/errors.js";
 import { formatValue, typeOf } from "../src/runtime/values.js";
@@ -57,22 +55,19 @@ const MAX_STEPS = 1_000_000;
 const STEPS_PER_FRAME = 20_000;
 
 const state = {
-  machine: null, // the running (or finished) machine
-  check: null, // the latest validateProgram result
-  timer: null, // the run/watch loop
-  lastCells: new Map(), // to flash cells that changed
+  machine: null,
+  check: null,
+  timer: null,
+  lastCells: new Map(),
   lastMood: 0,
   finished: false,
 };
-
-// ---- small helpers ------------------------------------------------------------
 
 function storage(action, key, value) {
   try {
     if (action === "get") return localStorage.getItem(key);
     localStorage.setItem(key, value);
   } catch {
-    // private mode or blocked storage: the playground works without it
   }
   return null;
 }
@@ -91,8 +86,6 @@ function setPill(el, text, kind = "") {
   el.textContent = text;
   el.className = `pill ${kind}`.trim();
 }
-
-// ---- the editor ---------------------------------------------------------------
 
 function lineHeight() {
   return parseFloat(getComputedStyle(els.source).lineHeight) || 22;
@@ -115,7 +108,6 @@ function renderEditor() {
   syncScroll();
 }
 
-// Mark lines with errors and the line that runs next, in the gutter and the code.
 function markLines() {
   const errorLines = new Set((state.check?.errors ?? []).map((error) => error.line));
   const current = state.machine && !state.machine.halted ? state.machine.current?.line : undefined;
@@ -191,7 +183,6 @@ function loadSource(text) {
   syncScroll();
 }
 
-// Tab inserts two spaces instead of leaving the editor; Ctrl+Enter runs.
 function onKeyDown(event) {
   if (event.key === "Tab" && !event.shiftKey) {
     event.preventDefault();
@@ -208,9 +199,6 @@ function onKeyDown(event) {
   }
 }
 
-// ---- output ---------------------------------------------------------------------
-
-// Remarks, errors and the "done" line each get a line of their own.
 function appendOutput(text, kind) {
   const atBottom = els.output.scrollHeight - els.output.scrollTop - els.output.clientHeight < 30;
   if (kind) {
@@ -228,7 +216,6 @@ function appendOutput(text, kind) {
   if (atBottom) els.output.scrollTop = els.output.scrollHeight;
 }
 
-// Output is buffered while a big run is going, then flushed once per frame.
 let pendingOutput = "";
 function flushOutput() {
   if (pendingOutput) {
@@ -236,8 +223,6 @@ function flushOutput() {
     pendingOutput = "";
   }
 }
-
-// ---- running ----------------------------------------------------------------------
 
 function inputReader() {
   const lines = els.input.value.split("\n");
@@ -277,7 +262,6 @@ function startMachine() {
   return true;
 }
 
-// Run some steps. Returns false once the program has finished (or failed).
 function advance(count) {
   const { machine } = state;
   try {
@@ -340,7 +324,6 @@ function runAll() {
   updateButtons();
 }
 
-// Speed 1 is one step a second; 10 is a blur.
 function watchDelay() {
   const speed = Number(els.speed.value);
   return Math.round(1000 / 1.9 ** (speed - 1));
@@ -368,7 +351,7 @@ function stepOnce() {
     if (!startMachine()) return;
     setPill(els.runStatus, "stepping", "busy");
     renderState(true);
-    return; // the first press just gets ready, so you can see line 1 before it runs
+    return;
   }
   if (advance(1)) {
     setPill(els.runStatus, "stepping", "busy");
@@ -391,8 +374,6 @@ function updateButtons() {
   els.play.disabled = running;
 }
 
-// ---- state panels ---------------------------------------------------------------------
-
 function renderState(follow = false) {
   const machine = state.machine;
   const mood = machine?.mood ?? 0;
@@ -402,7 +383,7 @@ function renderState(follow = false) {
   els.moodLevel.style.left = `${((mood - LOWEST_MOOD) / (HIGHEST_MOOD - LOWEST_MOOD)) * 100}%`;
   if (mood !== state.lastMood) {
     els.mood.classList.remove("changed");
-    void els.mood.offsetWidth; // restart the animation
+    void els.mood.offsetWidth;
     els.mood.classList.add("changed");
     state.lastMood = mood;
   }
@@ -436,8 +417,6 @@ function renderCells() {
   els.cells.innerHTML = html.join("");
   state.lastCells = new Map(cells.map(([index, value]) => [index, formatValue(value, true)]));
 }
-
-// ---- reference drawer --------------------------------------------------------------------
 
 function renderReference(filter = "") {
   const query = filter.trim().toLowerCase();
@@ -487,8 +466,6 @@ function insertExample(example) {
   toast(`Added ${example.split(" ")[0]}`);
 }
 
-// ---- theme and sharing ---------------------------------------------------------------------
-
 function currentTheme() {
   const set = document.documentElement.dataset.theme;
   if (set) return set;
@@ -524,8 +501,6 @@ async function share() {
   }
 }
 
-// ---- examples ----------------------------------------------------------------------------------
-
 async function loadExample(file) {
   try {
     const response = await fetch(`../examples/${file}`);
@@ -538,8 +513,6 @@ async function loadExample(file) {
     toast(`Couldn't load ${file}`);
   }
 }
-
-// ---- start up ------------------------------------------------------------------------------------
 
 const STARTER = `; Welcome to Twist! Press Run (or Ctrl+Enter).
 ; ps1 prints, ps3 plants a value in a cell, ad1 adds.

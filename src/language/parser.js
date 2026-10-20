@@ -1,13 +1,3 @@
-// The Twist parser: turns tokens into a program.
-//
-// A program is a list of instructions plus a map of labels. Each label points
-// at the position in the instruction list of the first instruction after it,
-// which is all the interpreter needs to jump there.
-//
-// The parser checks structure (what a line looks like, labels defined once and
-// used labels that exist). Whether an instruction exists and gets the right
-// operands is checked by validate.js, using the instruction table.
-
 import { OperandKind } from "./syntax.js";
 import { TokenType, tokenize, tokenizeLine } from "./lexer.js";
 
@@ -25,16 +15,6 @@ function invalid(message, column) {
   return { type: "invalid", message, column };
 }
 
-/**
- * Work out what one line's tokens mean.
- *
- * Returns one of:
- *   { type: "blank" }
- *   { type: "comment" }
- *   { type: "label", name }
- *   { type: "instruction", code, operands: [{ kind, text, value }] }
- *   { type: "invalid", message, column }
- */
 export function parseLine(lineTokens) {
   const error = lineTokens.find((token) => token.type === TokenType.ERROR);
   const tokens = lineTokens.filter((token) => token.type !== TokenType.COMMENT && token.type !== TokenType.ERROR);
@@ -71,20 +51,10 @@ export function parseLine(lineTokens) {
   return { type: "instruction", code: first.value, operands };
 }
 
-/** Work out what kind of line this is (see parseLine for what comes back). */
 export function classifyLine(text) {
   return parseLine(tokenizeLine(text));
 }
 
-/**
- * Parse a whole program.
- *
- * Returns:
- *   errors        [{ line, column?, message }] in the order they were found
- *   instructions  [{ line, code, operands }] in program order
- *   labels        Map of label name => { line, index }, where index is the
- *                 position in `instructions` that the label points at
- */
 export function parse(source) {
   const tokens = tokenize(source);
   const errors = [];

@@ -1,6 +1,3 @@
-// A tiny static file server for the playground. No dependencies.
-// Usage: npm run playground   (then open http://localhost:8080)
-
 import { createServer } from "node:http";
 import { readFile, stat } from "node:fs/promises";
 import { extname, join, normalize, sep } from "node:path";
@@ -27,7 +24,6 @@ const server = createServer(async (request, response) => {
     return;
   }
 
-  // keep requests inside the project folder
   const file = normalize(join(root, path));
   if (!file.startsWith(root.endsWith(sep) ? root : root + sep)) {
     response.writeHead(403).end("Forbidden");

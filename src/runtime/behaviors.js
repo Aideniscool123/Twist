@@ -1,10 +1,3 @@
-// What every Twist instruction does when it runs.
-//
-// Each behavior gets the machine and the instruction's operands. It reads and
-// writes cells through the machine's helpers, which check operand kinds at run
-// time (after sw1 an instruction may be handed operands meant for another
-// job) and throw Oops with a message when something is wrong.
-
 import { Oops } from "./errors.js";
 import { copyValue, describeValue, formatValue, isEmpty, valuesEqual } from "./values.js";
 
@@ -15,10 +8,9 @@ function readNumber(m) {
   if (line === null) throw new Oops(`${m.who} asked for a number, but there's no input left`);
   const text = line.trim();
   if (!NUMBER_INPUT.test(text)) throw new Oops(`${m.who} asked for a number, but got ${JSON.stringify(line)}`);
-  return Number(text) || 0; // || 0 turns -0 into 0
+  return Number(text) || 0;
 }
 
-// Check an index into a list or text and return it.
 function checkIndex(m, items, where, operand) {
   const index = m.wholeNumberOf(operand);
   if (index < 0 || index >= items.length) {
@@ -29,14 +21,12 @@ function checkIndex(m, items, where, operand) {
   return index;
 }
 
-// Change the number in a cell: `ad1 #0 5` is math(m, ops, (a, b) => a + b).
 function math(m, [cell, other], combine) {
   const index = m.cellOf(cell);
   const result = combine(m.numberIn(cell), m.numberOf(other));
   m.write(index, result === 0 ? 0 : result);
 }
 
-// Divide or take a remainder. Dividing by zero gives 0 instead of crashing.
 function divide(m, [cell, other], combine) {
   const index = m.cellOf(cell);
   const a = m.numberIn(cell);
@@ -51,7 +41,6 @@ function divide(m, [cell, other], combine) {
 }
 
 export const BEHAVIORS = {
-  // output
   ps1(m, [text]) {
     m.printLine(m.stringOf(text));
   },
@@ -65,7 +54,6 @@ export const BEHAVIORS = {
     m.printLine(m.moodName);
   },
 
-  // input
   ad2(m, [cell]) {
     const index = m.cellOf(cell);
     m.write(index, readNumber(m));
@@ -77,7 +65,6 @@ export const BEHAVIORS = {
     m.write(index, line);
   },
 
-  // memory
   ps3(m, [cell, value]) {
     const index = m.cellOf(cell);
     m.write(index, copyValue(m.valueOf(value)));
@@ -96,7 +83,6 @@ export const BEHAVIORS = {
     m.write(m.cellOf(cell), m.moodName);
   },
 
-  // math
   ad1: (m, ops) => math(m, ops, (a, b) => a + b),
   sb1: (m, ops) => math(m, ops, (a, b) => a - b),
   mu1: (m, ops) => math(m, ops, (a, b) => a * b),
@@ -115,7 +101,6 @@ export const BEHAVIORS = {
     m.write(index, m.numberIn(cell) > m.numberOf(other) ? 1 : 0);
   },
 
-  // control
   ps2(m, [target]) {
     m.jump(target);
   },
@@ -142,7 +127,6 @@ export const BEHAVIORS = {
     m.stop();
   },
 
-  // text
   jn2(m, [cell, value]) {
     const index = m.cellOf(cell);
     m.write(index, formatValue(m.read(index)) + formatValue(m.valueOf(value)));
@@ -163,7 +147,6 @@ export const BEHAVIORS = {
     m.write(index, Number(text) || 0);
   },
 
-  // list
   mk1(m, [cell]) {
     m.write(m.cellOf(cell), []);
   },
@@ -194,7 +177,6 @@ export const BEHAVIORS = {
     m.write(target, value.length);
   },
 
-  // chaos
   rd2(m, [cell, sides]) {
     const target = m.cellOf(cell);
     const count = m.wholeNumberOf(sides);
@@ -222,8 +204,6 @@ export const BEHAVIORS = {
     m.changeMood(1, "it appreciates the compliment");
   },
 
-  // misc
   hl2() {
-    // Hang Loose: nothing to do, on purpose
   },
 };

@@ -1,27 +1,17 @@
-// @ts-check
-// `@type` JSDoc annotations allow editor autocompletion and type checking
-// (when paired with `@ts-check`).
-// There are various equivalent ways to declare your Docusaurus config.
-// See: https://docusaurus.io/docs/api/docusaurus-config
-
 import {themes as prismThemes} from 'prism-react-renderer';
 
-// This runs in Node.js - Don't use client-side code here (browser APIs, JSX...)
-
-/** @type {import('@docusaurus/types').Config} */
 const config = {
   title: 'Twist',
   tagline: 'A single digit changes the whole meaning.',
   favicon: 'img/logo.svg',
 
-  // GitHub Pages address
   url: 'https://aideniscool123.github.io',
   baseUrl: '/Twist/',
-  organizationName: 'Aideniscool123', // your GitHub username
-  projectName: 'Twist',               // the repo name
-  trailingSlash: false,               // Docusaurus recommends setting this for GitHub Pages
+  organizationName: 'Aideniscool123',
+  projectName: 'Twist',
+  trailingSlash: false,
 
-  onBrokenLinks: 'throw',             // a broken link fails the build, so you find it
+  onBrokenLinks: 'throw',
 
   markdown: {
     hooks: { onBrokenMarkdownLinks: 'throw' },

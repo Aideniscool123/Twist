@@ -1,15 +1,3 @@
-// The Twist instruction table.
-//
-// Every instruction is a two-letter code with a number stuck to it. The number
-// is NOT a variant: ps1, ps2 and ps3 are three unrelated instructions.
-//
-// The chaos rule keeps it that way: instructions that share the same two
-// letters must all belong to different categories. `chaosViolations` checks
-// it, and the tests fail if the rule is broken.
-//
-// This table only describes instructions (for the checker, the docs and the
-// CLI). What each one actually does lives in src/runtime/behaviors.js.
-
 import { INSTRUCTION_CODE, OperandKind } from "./syntax.js";
 
 export const Category = Object.freeze({
@@ -42,10 +30,8 @@ function define({ code, name, category, operands, summary, example }) {
   });
 }
 
-/** Every Twist instruction, grouped by category. */
 export const INSTRUCTIONS = Object.freeze(
   [
-    // output
     {
       code: "ps1",
       name: "Print String",
@@ -79,7 +65,6 @@ export const INSTRUCTIONS = Object.freeze(
       example: "mo1",
     },
 
-    // input
     {
       code: "ad2",
       name: "Ask Directly",
@@ -97,7 +82,6 @@ export const INSTRUCTIONS = Object.freeze(
       example: "rd3 #2",
     },
 
-    // memory
     {
       code: "ps3",
       name: "Plant Seed",
@@ -137,7 +121,6 @@ export const INSTRUCTIONS = Object.freeze(
       example: "mo2 #9",
     },
 
-    // math
     {
       code: "ad1",
       name: "Add Digits",
@@ -224,7 +207,6 @@ export const INSTRUCTIONS = Object.freeze(
       example: "gt1 #0 100",
     },
 
-    // control
     {
       code: "ps2",
       name: "Pounce Somewhere",
@@ -292,7 +274,6 @@ export const INSTRUCTIONS = Object.freeze(
       example: "hl1",
     },
 
-    // text
     {
       code: "jn2",
       name: "Join Neatly",
@@ -332,7 +313,6 @@ export const INSTRUCTIONS = Object.freeze(
       example: "nm1 #0",
     },
 
-    // list
     {
       code: "mk1",
       name: "Make Kit",
@@ -399,7 +379,6 @@ export const INSTRUCTIONS = Object.freeze(
       example: "ln1 #0 #5",
     },
 
-    // chaos
     {
       code: "rd2",
       name: "Roll Dice",
@@ -455,7 +434,6 @@ export const INSTRUCTIONS = Object.freeze(
       example: "ty1",
     },
 
-    // misc
     {
       code: "hl2",
       name: "Hang Loose",
@@ -469,12 +447,10 @@ export const INSTRUCTIONS = Object.freeze(
 
 const BY_CODE = new Map(INSTRUCTIONS.map((instruction) => [instruction.code, instruction]));
 
-/** Look up an instruction by its code, like "ps1". Returns undefined if there isn't one. */
 export function getInstruction(code) {
   return BY_CODE.get(code);
 }
 
-/** Group instructions by their two letters: Map { "ps" => [ps1, ps2, ps3], ... } */
 export function groupByMnemonic(list = INSTRUCTIONS) {
   const groups = new Map();
   for (const instruction of list) {
@@ -485,10 +461,6 @@ export function groupByMnemonic(list = INSTRUCTIONS) {
   return groups;
 }
 
-/**
- * Find places where the chaos rule is broken: two instructions with the same
- * two letters and the same category. An empty array means the rule holds.
- */
 export function chaosViolations(list = INSTRUCTIONS) {
   const violations = [];
   for (const [mnemonic, group] of groupByMnemonic(list)) {

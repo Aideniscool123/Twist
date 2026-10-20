@@ -26,8 +26,6 @@ describe("example programs", () => {
     });
   }
 
-  // The website's example pages run every example (with its sample input) to
-  // show the output, so every example must run cleanly.
   for (const { file, input } of EXAMPLES) {
     it(`${file} runs to the end with --calm`, () => {
       const source = readFileSync(new URL(file, examplesDir), "utf8");

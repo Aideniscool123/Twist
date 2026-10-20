@@ -1,23 +1,15 @@
-// The Twist lexer: turns program text into a flat list of tokens.
-//
-// Every token knows its line and column (both start at 1). Lines are separated
-// by NEWLINE tokens and the list always ends with EOF, so the parser never has
-// to look at raw text. A mistake inside a line becomes an ERROR token, and the
-// rest of that line is skipped. An ERROR's `column` is where the problem is,
-// and its `start` is where the token it spoiled began.
-
 import { COMMENT_MARKER, INSTRUCTION_CODE } from "./syntax.js";
 
 export const TokenType = Object.freeze({
-  CODE: "code", // ps1
-  CELL: "cell", // #0
-  NUMBER: "number", // -2.5
-  STRING: "string", // "hi"
-  LABEL: "label", // @loop
-  LABEL_DEF: "label_def", // @loop:
-  WORD: "word", // anything else (always a mistake, the parser reports it)
-  COMMENT: "comment", // ; a note
-  ERROR: "error", // something the lexer couldn't read
+  CODE: "code",
+  CELL: "cell",
+  NUMBER: "number",
+  STRING: "string",
+  LABEL: "label",
+  LABEL_DEF: "label_def",
+  WORD: "word",
+  COMMENT: "comment",
+  ERROR: "error",
   NEWLINE: "newline",
   EOF: "eof",
 });
@@ -59,7 +51,6 @@ function wordToken(text) {
   return { type: TokenType.WORD, value: text };
 }
 
-// Read a string starting at the opening quote. Returns the token, or an error.
 function readString(text, start) {
   let value = "";
   let j = start + 1;
@@ -91,7 +82,6 @@ function readString(text, start) {
   return { error: "This string is missing its closing quote", errorColumn: start + 1 };
 }
 
-/** Turn one line of text into tokens (without a NEWLINE at the end). */
 export function tokenizeLine(text, line = 1) {
   const tokens = [];
   let i = 0;
@@ -137,14 +127,12 @@ export function tokenizeLine(text, line = 1) {
   return tokens;
 }
 
-/** Turn a whole program into tokens, with a NEWLINE after every line and EOF at the end. */
 export function tokenize(source) {
   if (typeof source !== "string") {
     throw new TypeError("tokenize expects the program text as a string");
   }
 
   const tokens = [];
-  // Some editors (Notepad, for one) start a file with an invisible byte-order mark.
   const lines = source.replace(/^﻿/, "").split(/\r?\n/);
   lines.forEach((text, offset) => {
     const line = offset + 1;

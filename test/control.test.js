@@ -70,7 +70,6 @@ describe("call and return", () => {
   });
 
   it("can recurse", () => {
-    // count #0 down to zero, printing on the way back up
     const source = "ps3 #0 3\ncl1 @down\nhl1\n@down:\njz1 #0 @bottom\nad1 #0 -1\ncl1 @down\nad1 #0 1\nad3 #0\n@bottom:\nrt1";
     assert.equal(out(source), "1\n2\n3\n");
   });

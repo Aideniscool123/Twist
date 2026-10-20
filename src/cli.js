@@ -1,6 +1,3 @@
-// The `twist` command line tool: run programs, check them, explore the
-// instruction set, or play in the REPL.
-
 import { readFileSync, readdirSync, statSync } from "node:fs";
 import { join } from "node:path";
 import { NAME, TAGLINE, VERSION } from "./index.js";
@@ -28,7 +25,6 @@ Options for run and repl:
   --seed <number>     Keep the chaos, but make the randomness repeatable
   --max-steps <n>     Give up after this many steps (default 1,000,000)`;
 
-// Read --calm, --seed and --max-steps. Returns { options, rest } or { error }.
 function parseRunOptions(args) {
   const options = {};
   const rest = [];
@@ -209,10 +205,6 @@ function replCommand(args, io, fail) {
   });
 }
 
-/**
- * Run the CLI. `argv` is the list of arguments after the program name.
- * Returns the exit code (0 = success).
- */
 export function run(argv, io = {}) {
   const out = io.stdout ?? process.stdout;
   const err = io.stderr ?? process.stderr;
