@@ -78,4 +78,3 @@ The site's source is in [website/](website).
 - [x] Phase 7: Add error messages, tests, and the `run` CLI/REPL
 - [x] Phase 8: Build the web playground
 - [x] Phase 9: Write docs and an example gallery
-- [ ] Phase 10: Build something real with Twist
